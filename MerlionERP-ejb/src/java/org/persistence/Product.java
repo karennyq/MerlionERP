@@ -21,7 +21,7 @@ public class Product implements Serializable {
     @Basic
     private String product_name;
     @Basic
-    private Double price_per_unit;
+    private Double price_per_box;
     @Basic
     private Integer avail_boxes;
     @Basic
@@ -63,12 +63,12 @@ public class Product implements Serializable {
         return product_name;
     }
 
-    public void setPrice_per_unit(Double param) {
-        this.price_per_unit = param;
+    public void setPrice_per_box(Double param) {
+        this.price_per_box = param;
     }
 
-    public Double getPrice_per_unit() {
-        return price_per_unit;
+    public Double getPrice_per_box() {
+        return price_per_box;
     }
 
     public void setAvail_boxes(Integer param) {

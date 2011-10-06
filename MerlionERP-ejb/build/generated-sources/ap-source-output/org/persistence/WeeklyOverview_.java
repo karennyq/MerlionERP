@@ -7,7 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import org.persistence.DailyOverview;
 import org.persistence.MonthlyOverview;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-04T14:44:56")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-06T12:27:25")
 @StaticMetamodel(WeeklyOverview.class)
 public class WeeklyOverview_ extends ProductionOverview_ {
 

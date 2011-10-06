@@ -9,7 +9,7 @@ import org.persistence.SalesInquiry;
 import org.persistence.SalesLead.ConvertStatus;
 import org.persistence.SalesLead.SalesLeadStatus;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-04T14:44:56")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-06T12:27:25")
 @StaticMetamodel(SalesLead.class)
 public class SalesLead_ { 
 

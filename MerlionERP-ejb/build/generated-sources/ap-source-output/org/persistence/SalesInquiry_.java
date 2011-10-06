@@ -12,7 +12,7 @@ import org.persistence.SalesInquiry.Priority;
 import org.persistence.SalesInquiry.Status;
 import org.persistence.SalesLead;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-04T14:44:56")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-06T12:27:25")
 @StaticMetamodel(SalesInquiry.class)
 public class SalesInquiry_ { 
 

@@ -17,27 +17,34 @@ public class RawMatBatch implements Serializable {
 	@Id
 	@GeneratedValue
 	private Long raw_mat_batch_id;
-	
+
 	@Basic
 	@Temporal(TIMESTAMP)
 	private Date inbound_date;
-	
+
 	@Basic
 	@Temporal(TIMESTAMP)
 	private Date expired_date;
-	
+
 	@Basic
 	private Double kg_count;
-	
+
 	@Basic
 	private Double kg_remaining;
-	
+
 	@ManyToOne
 	private RawMaterial rawMaterial;
-	
+
 	@OneToMany
-	//@JoinColumn(name = "RAWMATBATCH_raw_mat_batch_id", referencedColumnName = "raw_mat_batch_id")
+	// @JoinColumn(name = "RAWMATBATCH_raw_mat_batch_id", referencedColumnName =
+	// "raw_mat_batch_id")
 	private Collection<RawMatBatchMovement> rawMatBatchMovements;
+
+	@Basic
+	private Integer total_storage_unit;
+
+	@Basic
+	private String location;
 
 	public void setRaw_mat_batch_id(Long param) {
 		this.raw_mat_batch_id = param;
@@ -80,19 +87,35 @@ public class RawMatBatch implements Serializable {
 	}
 
 	public RawMaterial getRawMaterial() {
-	    return rawMaterial;
+		return rawMaterial;
 	}
 
 	public void setRawMaterial(RawMaterial param) {
-	    this.rawMaterial = param;
+		this.rawMaterial = param;
 	}
 
 	public Collection<RawMatBatchMovement> getRawMatBatchMovements() {
-	    return rawMatBatchMovements;
+		return rawMatBatchMovements;
 	}
 
 	public void setRawMatBatchMovements(Collection<RawMatBatchMovement> param) {
-	    this.rawMatBatchMovements = param;
+		this.rawMatBatchMovements = param;
+	}
+
+	public void setTotal_storage_unit(Integer param) {
+		this.total_storage_unit = param;
+	}
+
+	public Integer getTotal_storage_unit() {
+		return total_storage_unit;
+	}
+
+	public void setLocation(String param) {
+		this.location = param;
+	}
+
+	public String getLocation() {
+		return location;
 	}
 
 }

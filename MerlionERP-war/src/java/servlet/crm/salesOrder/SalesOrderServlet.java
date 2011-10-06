@@ -399,7 +399,7 @@ public class SalesOrderServlet extends HttpServlet {
             }
 
             li.setProduct(p);
-            li.setBase_price(p.getPrice_per_unit());
+            li.setBase_price(p.getPrice_per_box());
             li.setActual_price();
 
             if (index == -1) {
