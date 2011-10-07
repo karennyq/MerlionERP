@@ -7,7 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import org.persistence.RawMatBatch;
 import org.persistence.RawMaterialDetail;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-06T12:27:25")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-07T10:39:55")
 @StaticMetamodel(RawMaterial.class)
 public class RawMaterial_ { 
 

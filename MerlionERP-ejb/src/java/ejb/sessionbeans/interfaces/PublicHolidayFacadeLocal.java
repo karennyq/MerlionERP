@@ -31,7 +31,9 @@ public interface PublicHolidayFacadeLocal {
 
     int count();
     
-    boolean findUsedDate(Date date);
+    //boolean findUsedDate(Date date);
+    
+    PublicHoliday getPH(Date date);
 
     public List<PublicHoliday> getPHInPeriod(Date min, Date max);
     

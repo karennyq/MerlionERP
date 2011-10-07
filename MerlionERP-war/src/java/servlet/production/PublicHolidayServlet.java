@@ -114,7 +114,7 @@ public class PublicHolidayServlet extends HttpServlet {
             } else if (date.before(new Date()) || date.equals(new Date())) {
                 result = "Please choose a date after today!";
                 
-            } else if (phFacade.findUsedDate(date)) {
+            } else if (phFacade.getPH(date) != null) {
                 result = "Date is in use! Please choose another date.";
                 
             } else {

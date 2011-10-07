@@ -66,7 +66,7 @@
         <div style="padding:3px 2px;border-bottom:1px solid #ccc"><h2>Update Public Holiday</h2></div>  
         <br/>
         <form id="ff" method="post">
-            <input type="hidden" name="production_line_id" id="production_line_id" value=<%= request.getParameter("production_line_id")%> />
+            <input type="hidden" name="production_line_id" id="production_line_id" value="<%= request.getParameter("production_line_id")%>" />
             <div id="updatePL" class="easyui-panel" title="General Details:" style="padding:0px;background:#fafafa;" collapsible="true" >
                 <table class="tableForms">
                     <tr>

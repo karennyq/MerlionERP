@@ -6,10 +6,12 @@ package servlet.production;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import ejb.sessionbeans.interfaces.DailyOverviewFacadeLocal;
 import ejb.sessionbeans.interfaces.MonthlyOverviewFacadeLocal;
 import ejb.sessionbeans.interfaces.ProductFacadeLocal;
 import ejb.sessionbeans.interfaces.ProductionLineFacadeLocal;
 import ejb.sessionbeans.interfaces.PublicHolidayFacadeLocal;
+import ejb.sessionbeans.interfaces.WeeklyOverviewFacadeLocal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -48,6 +50,12 @@ public class ProductionPlanServlet extends HttpServlet {
     @EJB
     ProductFacadeLocal pFacade;
     
+    @EJB
+    WeeklyOverviewFacadeLocal woFacade;
+    
+    @EJB
+    DailyOverviewFacadeLocal doFacade;
+    
     Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
     
     /** 
@@ -82,6 +90,9 @@ public class ProductionPlanServlet extends HttpServlet {
                 
             } else if (action.equals("createPP")) {
                 createPP(request, response, out);
+                
+            } else if (action.equals("getMODetails")) {
+                getMODetails(request, response, out);
                 
             }
 
@@ -129,7 +140,6 @@ public class ProductionPlanServlet extends HttpServlet {
         
         String year = request.getParameter("year");
         String month = request.getParameter("month");
-        String listName = request.getParameter("listName");
         
         Calendar cal = Calendar.getInstance();
         cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, 1);
@@ -158,9 +168,6 @@ public class ProductionPlanServlet extends HttpServlet {
             cal.add(Calendar.DAY_OF_YEAR, 1);
         } while (cal.get(Calendar.MONTH) == Integer.parseInt(month)-1);
         
-        HttpSession session = request.getSession();
-        session.setAttribute(listName, new ArrayList());
-        
         response.setContentType("application/xml");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write("<details>");
@@ -175,6 +182,14 @@ public class ProductionPlanServlet extends HttpServlet {
         String listName = request.getParameter("listName");
         HttpSession session = request.getSession();
         ArrayList<PlannedDemand> pdList = (ArrayList<PlannedDemand>) session.getAttribute(listName);
+        for (PlannedDemand pd: pdList) {
+            pd.setPlannedDemandAmendment(null);
+            pd.getProduct().setBulkDiscounts(null);
+            pd.getProduct().setDeliveryOrderDetails(null);
+            pd.getProduct().setIngredients(null);
+            pd.getProduct().setPdtBatches(null);
+            pd.getProduct().setSalesForecasts(null);
+        }
         
         String json = gson.toJson(new JsonReturnTable(pdList.size() + "", pdList));
         out.println(json);
@@ -190,13 +205,13 @@ public class ProductionPlanServlet extends HttpServlet {
         HttpSession session = request.getSession();
         ArrayList<PlannedDemand> pdList = (ArrayList<PlannedDemand>) session.getAttribute(listName);
         
-        double currentCapacity = Double.parseDouble(quantity) / pFacade.find(Long.parseLong(product_id)).getProduction_capacity();
+        double usedCapacity = Double.parseDouble(quantity) / pFacade.find(Long.parseLong(product_id)).getProduction_capacity();
         
         for (PlannedDemand pd: pdList) {
-            currentCapacity = currentCapacity + pd.getHours_needed();
+            usedCapacity = usedCapacity + pd.getHours_needed();
         }
         
-        double utilization = currentCapacity * 100 / Integer.parseInt(totalCapacity);
+        double utilization = usedCapacity * 100 / Integer.parseInt(totalCapacity);
         
         if (utilization > 90) {
             response.setContentType("application/xml");
@@ -254,13 +269,13 @@ public class ProductionPlanServlet extends HttpServlet {
         
         session.setAttribute(listName, pdList);
         
-        double currentCapacity = 0;
+        double usedCapacity = 0;
         
         for (PlannedDemand pd: pdList) {
-            currentCapacity = currentCapacity + pd.getHours_needed();
+            usedCapacity = usedCapacity + pd.getHours_needed();
         }
         
-        double utilization = currentCapacity * 100 / Integer.parseInt(totalCapacity);
+        double utilization = usedCapacity * 100 / Integer.parseInt(totalCapacity);
         
         response.setContentType("application/xml");
         response.setCharacterEncoding("UTF-8");
@@ -292,13 +307,38 @@ public class ProductionPlanServlet extends HttpServlet {
         mo.setOt_capacity(0.00);
         mo.setOt_utilization(0.00);
         mo.setPlannedDemand(new ArrayList());
+        mo.setWeeklyOverviews(new ArrayList());
         
-        moFacade.createMO(mo, pdList);
+        mo = moFacade.createMO(mo, pdList);
+        mo = woFacade.createWO(mo, pdList);
+        doFacade.createDO(mo, pdList);
         
         content = "Created Planned Demand on " + new java.text.DateFormatSymbols().getMonths()[Integer.parseInt(month)-1] + ", " + year + " Successfully.";
         
         session.setAttribute(listName, new ArrayList());
         json = gson.toJson(new JsonReturnMsg("Create Production Plan", content, "info"));
+        out.println(json);
+    }
+    
+    private void getMODetails(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String mo_id = request.getParameter("mo_id");
+        String listName = request.getParameter("listName");
+
+        MonthlyOverview mo = moFacade.find(Long.parseLong(mo_id));
+        
+        ArrayList<PlannedDemand> pdList = new ArrayList<PlannedDemand>();
+        for (PlannedDemand pd: mo.getPlannedDemand()) {
+            pdList.add(pd);
+        }
+        
+        HttpSession session = request.getSession();
+        session.setAttribute(listName, pdList);
+        
+        mo.setPlannedDemand(null);
+        mo.setWeeklyOverviews(null);
+        
+        String json = gson.toJson(mo);
         out.println(json);
     }
 

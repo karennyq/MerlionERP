@@ -15,7 +15,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.persistence.MonthlyOverview;
 import org.persistence.PlannedDemand;
-import org.persistence.Product;
 
 /**
  *
@@ -54,7 +53,7 @@ public class MonthlyOverviewFacade extends AbstractFacade<MonthlyOverview> imple
     }
 
     @Override
-    public void createMO(MonthlyOverview mo, ArrayList<PlannedDemand> pdList) {
+    public MonthlyOverview createMO(MonthlyOverview mo, ArrayList<PlannedDemand> pdList) {
         create(mo);
         
         for (PlannedDemand pd: pdList) {
@@ -63,5 +62,7 @@ public class MonthlyOverviewFacade extends AbstractFacade<MonthlyOverview> imple
         }
         
         edit(mo);
+        
+        return mo;
     }
 }

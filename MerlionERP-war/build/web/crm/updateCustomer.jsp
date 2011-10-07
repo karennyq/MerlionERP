@@ -38,6 +38,7 @@
                     cache: false,
                     success: function(data){
                         $('#inquirer_id').val(data.inquirer_id);
+                        $('#emp_name').html(data.employee.emp_name);
                         $('#company_name').val(data.company_name);
                         $('#contact_person').val(data.contact_person);
                         $('#contact_no').val(data.contact_no);
@@ -54,17 +55,15 @@
             }
             
             $(document).ready(function(){
-                if($('#inquirer_id').val()!=null&&$('#inquirer_id').val()!=""){
+                if($('#inquirer_id').val()!=null||$('#inquirer_id').val()!=""){
                     getCustomerInfo();
                 }
-                
                 $('#cust_type').combobox({  
                     url:'../CustomerServlet?action=loadPage&content=dropdown',  
                     valueField:'id',  
                     textField:'text',
                     editable:false,
-                    required:true,
-                    formatter:comboboxFomatter
+                    required:true
                 });
             });
             
@@ -84,7 +83,7 @@
         </script>    
     </head>
     <body>
-        <div style="padding:3px 2px;border-bottom:1px solid #ccc"><h2>Update Customer (ID:  <%=(request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : ""%>)</h2></div>  
+        <div style="padding:3px 2px;border-bottom:1px solid #ccc"><h2>Update Customer</h2></div>  
         <br/>
         <form id="ff" method="post">
             <input type="hidden" id="inquirer_id" name="inquirer_id" value="<%=(request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : ""%>"/>
@@ -92,11 +91,13 @@
                 <table class="tableForms"> 
                     <tr>  
                         <td class="tableForms_label">Customer ID:</td> 
-                        <td class="tableForms_userInput">
-                            <div id="inquirer_id_tx" name="inquirer_id_tx">
-                                <%=(request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : ""%>
-                            </div>
+                        <td class="tableForms_userInput"><div id="inquirer_id_tx" name="inquirer_id_tx">
+                            <%=(request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : ""%>
                         </td>
+                    </tr>
+                    <tr>  
+                        <td class="tableForms_label">Sales Executive ID: </td> 
+                        <td class="tableForms_userInput" id ="emp_name" name="emp_name"></td> 
                     </tr>
                     <tr>
                         <td class="tableForms_label">Company:</td>  
@@ -133,7 +134,9 @@
                     <tr>
                         <td class="tableForms_label">Customer Type:</td>  
                         <td class="tableForms_userInput">
+
                             <select id="cust_type" name="cust_type" panelHeight="auto" class="easyui-combobox"></select> 
+
                         </td> 
                     </tr>
                     <tr>  
@@ -144,7 +147,7 @@
             </div>
             <br/>
             <div class="form_buttons">
-                <input type="submit" onclick="onClickConfirm();" value="Save"/>
+                <input type="submit" onclick="onClickConfirm();" value="Update"/>
                 <input type="button" onclick="custReset('ff','Reset the form?')" value="Reset" />
             </div> 
         </form>

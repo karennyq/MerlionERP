@@ -15,9 +15,7 @@
         
         <script type="text/javascript">
             $(document).ready(function(){
-                if($('#sales_forecast_id').val()!=null||$('#sale_forecast_id').val()==""){
-                    getDetails();
-                }
+                getDetails();
                 
                 $('#load').hide();
                 
@@ -92,7 +90,7 @@
         <div style="padding:3px 2px;border-bottom:1px solid #ccc"><h2>Update Sales Forecast</h2></div>  
         <br/>
         <form id="ff" method="post">
-            <input type="hidden" name="sales_forecast_id" id="sales_forecast_id" value=<%= request.getParameter("sales_forecast_id")%> />
+            <input type="hidden" name="sales_forecast_id" id="sales_forecast_id" value="<%= request.getParameter("sales_forecast_id")%>" />
             <div id="updateSF" class="easyui-panel" title="General Details:" style="padding:0px;background:#fafafa;" collapsible="true" >
                 <table class="tableForms">
                     <tr>

@@ -219,6 +219,7 @@
                 </tr>
             </table>
         </div>
+        <!--
         <br/>
         <div id="acctD" class="easyui-panel" title="Account Details:" style="padding:0px;background:#fafafa;"  
              collapsible="true" > 
@@ -226,11 +227,12 @@
                 <tr>  
                     <td class="tableForms_label">Account ID: </td> 
                     <td class="tableForms_userInput" >
-                        <%=request.getParameter("account_id")%>
+                        <%//=request.getParameter("account_id")%>
                     </td>
                 </tr>
             </table>
         </div>
+        -->
         <br/>
         <div id="updateCredit" class="easyui-panel" title="Credit:" style="padding:0px;background:#fafafa;" collapsible="true" > 
             <table class="tableForms">

@@ -80,7 +80,7 @@ public class SalesOrderServlet extends HttpServlet {
 
             } else if (action.equals("cancelSO")) {
                 cancelSo(request, response, out);
-                
+
             } else if (action.equals("addProduct")) {
                 addProduct(request, response, out);
 
@@ -98,7 +98,7 @@ public class SalesOrderServlet extends HttpServlet {
 
             } else if (action.equals("getProductList")) {
                 getProductList(request, response, out);
-                
+
             } else if (action.equals("updateSO")) {
                 updateSO(request, response, out);
 
@@ -202,7 +202,7 @@ public class SalesOrderServlet extends HttpServlet {
                 newSo.setSo_id(so.getSo_id());
                 newSo.setStatus(so.getStatus());
                 //newSo.setActual_total();
-                
+
                 newSo.setDiscounted_total(totalAmt);
                 newSoList.add(newSo);
             }
@@ -255,14 +255,14 @@ public class SalesOrderServlet extends HttpServlet {
 
             Double soAmt = so.getDiscounted_total();
             Double currentCredit = so.getPurchaseOrder().getCustomer().getAccount().getCredit_amt();
-            System.out.println("CC===="+currentCredit);
+            System.out.println("CC====" + currentCredit);
             Double currentDeposit = so.getPurchaseOrder().getCustomer().getAccount().getDeposit_amt();
-            System.out.println("CD===="+currentDeposit);
+            System.out.println("CD====" + currentDeposit);
             Double depositAmt = so.getDeposit_requested();
-                        System.out.println("Deposit===="+depositAmt);
+            System.out.println("Deposit====" + depositAmt);
 
             Double refundableAmt = so.getPurchaseOrder().getCustomer().getAccount().getRefundable_amt();
-                                    System.out.println("refundableAmt===="+refundableAmt);
+            System.out.println("refundableAmt====" + refundableAmt);
 
             if (so.getCreditCheck().equals(SalesOrder.CreditCheck.Approved)) {
                 if (depositAmt == 0.00) {
@@ -278,8 +278,8 @@ public class SalesOrderServlet extends HttpServlet {
                             so.getPurchaseOrder().getCustomer().getAccount().setDeposit_amt(newDeposit);
                             transactionFacade.createTransaction(so.getPurchaseOrder().getCustomer().getAccount().getAccount_id() + "", depositAmt + "", "Deposit", "Debit");
                         }
-                        
-                                                    Double newCredit = currentCredit - soAmt + depositAmt;
+
+                        Double newCredit = currentCredit - soAmt + depositAmt;
 
                         so.getPurchaseOrder().getCustomer().getAccount().setCredit_amt(newCredit);
                         accountFacade.edit(so.getPurchaseOrder().getCustomer().getAccount());
@@ -308,7 +308,6 @@ public class SalesOrderServlet extends HttpServlet {
             salesOrderFacade.edit(so);
             salesOrderFacade.refresh();
 
-
             if (so.getAtpCheck().equals(SalesOrder.ATPCheck.Sufficient)) { // ----- need to change... now only check against the current inventory  
                 for (LineItem li : so.getLineItems()) {
                     Product p = li.getProduct();
@@ -321,7 +320,6 @@ public class SalesOrderServlet extends HttpServlet {
                     salesOrderFacade.refresh();
                 }
             }
-
 
             //salesOrderFacade.edit(so);
 
@@ -337,7 +335,7 @@ public class SalesOrderServlet extends HttpServlet {
             out.println(json);
         }
     }
-    
+
     private void addProduct(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String listName = request.getParameter("listName");
@@ -413,7 +411,7 @@ public class SalesOrderServlet extends HttpServlet {
             out.println(json);
         }
     }
-    
+
     private void removeProductItem(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String listName = request.getParameter("listName");
@@ -428,7 +426,7 @@ public class SalesOrderServlet extends HttpServlet {
         String json = gson.toJson(new JsonReturnMsg("Info", "Product Deleted!", "info"));
         out.println(json);
     }
-    
+
     private void updateProductItem(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String listName = request.getParameter("listName");
@@ -454,7 +452,7 @@ public class SalesOrderServlet extends HttpServlet {
             li.setIndicative_lead_time(10); //fake one....
         }
 
-        for (BulkDiscount bd: p.getBulkDiscounts()) {
+        for (BulkDiscount bd : p.getBulkDiscounts()) {
             if (pdtQty >= bd.getBoxes_required()) {
                 if (boxReq < bd.getBoxes_required()) {
                     boxReq = bd.getBoxes_required();
@@ -469,7 +467,7 @@ public class SalesOrderServlet extends HttpServlet {
         String json = gson.toJson(new JsonReturnMsg("Info", "Product Updated.", "info"));
         out.println(json);
     }
-    
+
     private void updateDiscount(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String discountName = request.getParameter("discountName");
@@ -492,7 +490,7 @@ public class SalesOrderServlet extends HttpServlet {
             out.println(json);
         }
     }
-    
+
     private void getSODetails(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String json = "";
@@ -519,9 +517,9 @@ public class SalesOrderServlet extends HttpServlet {
         c.setSoleDistribution(null);
         so.setLineItems(null);
         so.setBackOrders(null);
-        for(DeliveryOrder o: so.getDeliveryOrders()){
-                o.setSalesOrder(null);
-                o.setDeliveryOrderDetails(null);
+        for (DeliveryOrder o : so.getDeliveryOrders()) {
+            o.setSalesOrder(null);
+            o.setDeliveryOrderDetails(null);
         }
         so.setPurchaseOrder(new PurchaseOrder());
         so.getPurchaseOrder().setCustomer(c);
@@ -530,7 +528,7 @@ public class SalesOrderServlet extends HttpServlet {
         System.out.println(json);
         out.println(json);
     }
-    
+
     private void getProductList(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         HttpSession session = request.getSession();
@@ -576,7 +574,7 @@ public class SalesOrderServlet extends HttpServlet {
                         }
                     }
                 }
-                
+
                 if (li.getBulk_discount() == null) {
                     li.setBulk_discount(0.0);
                 }
@@ -588,18 +586,18 @@ public class SalesOrderServlet extends HttpServlet {
 
             FooterItem fi = new FooterItem("Sub Total:", totalPrice);
             ArrayList li = new ArrayList();
-            
+
             double disc = Double.parseDouble(session.getAttribute(discountName).toString());
             FooterItem fi2 = new FooterItem("Add. Discount:", disc);
             ArrayList li2 = new ArrayList();
-            
+
             double netTotal = totalPrice * (1 - disc / 100);
             FooterItem fi3 = new FooterItem("Net Total:", netTotal);
             ArrayList li3 = new ArrayList();
 
             FooterItem fi4 = new FooterItem("Lead Time:", totalLeadTime);
             ArrayList li4 = new ArrayList();
-            
+
             li.add(fi);
             li.add(fi2);
             li.add(fi3);
@@ -609,7 +607,7 @@ public class SalesOrderServlet extends HttpServlet {
             out.println(json);
         }
     }
-    
+
     private class FooterItem {
 
         private String bulk_discount;
@@ -622,7 +620,7 @@ public class SalesOrderServlet extends HttpServlet {
             //this.indicative_lead_time = indicative_lead_time;
         }
     }
-    
+
     private void updateSO(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String json;
@@ -648,7 +646,6 @@ public class SalesOrderServlet extends HttpServlet {
             out.println(json);
         }
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 

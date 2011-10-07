@@ -19,11 +19,7 @@
             <% session.setAttribute("updateSODiscount" + request.getParameter("so_id"), "0.00"); %>
                 
             $(document).ready(function(){                
-                $(function(){
-                    if($('#so_id').val()!=null&&$('#so_id').val()!=""){
-                        getSODetails();
-                    }
-                })
+                getSODetails();
                 
                 $.ajax({
                     type: "POST",
@@ -326,7 +322,7 @@
                     success:function(data){
                         var obj = jQuery.parseJSON(data); 
                         if((obj.type!='error')){
-                            //all update    
+                            reloadAll();
                         }
                         alertMsg(obj);
                     }

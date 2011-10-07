@@ -12,14 +12,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file = "../global/global_include.jsp" %>
-        <title>Create Sales Forecast</title>
+        <title>Create Production Plan</title>
+        
+        <% session.setAttribute("createPDList", new ArrayList()); %>
+        <% Calendar cal = Calendar.getInstance(); %>
+        <% int year = cal.get(Calendar.YEAR); %>
+        <% int month = cal.get(Calendar.MONTH); %>
+        <% String[] monthName = {"January","February","March","April","May","June","July","August","September","October","November","December"}; %>
         
         <script type="text/javascript">
-            <% Calendar cal = Calendar.getInstance(); %>
-            <% int year = cal.get(Calendar.YEAR); %>
-            <% int month = cal.get(Calendar.MONTH); %>
-            <% String[] monthName = {"January","February","March","April","May","June","July","August","September","October","November","December"}; %>
-            
             $(document).ready(function(){
                 $('#monthTab').hide();
                 $('#workingDaysTab').hide();
@@ -46,6 +47,7 @@
             
             $(function() {
                 $('#year').change(function() {
+                    /*
                     $('#workingDaysTab').hide();
                     $('#capacityTab').hide();
                     $('#utilizationTab').hide();
@@ -53,6 +55,7 @@
                     $('#forecastedTab').hide();
                     $('#quantityTab').hide();
                     $('#create').hide();
+                    */
                     
                     if ($("#year :selected").val() == "") {
                         $('#monthTab').hide();

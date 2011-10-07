@@ -17,8 +17,8 @@
                 return '<input type="button" onclick="goUpdate('+rowData.id+');" value="Update"/>';  
             }
             
-            function goUpdate(id){
-                window.parent.addTab('update_pp'+id,'Update Production Plan '+id,'<%=GVPRODUCTION.UPDATE_PP%>?id='+id);
+            function goUpdate(mo_id){
+                window.parent.addTab('update_pp'+mo_id,'Update Production Plan: '+mo_id,'<%=GVPRODUCTION.UPDATE_PP%>?mo_id='+mo_id);
             }
             
             function weeklyAction(value,rowData,rowIndex) {

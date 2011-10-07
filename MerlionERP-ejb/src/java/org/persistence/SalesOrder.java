@@ -27,10 +27,10 @@ public class SalesOrder implements Serializable {
         Pending, Confirmed, Cancelled
     }
     public enum CreditCheck {
-        Pending, Approved, Not_Approved
+        Pending, Approved, Unapproved
     }
     public enum ATPCheck {
-        Pending, Sufficient, Not_Sufficient
+        Pending, Sufficient, Insufficient
     }
     @Id
     @GeneratedValue

@@ -12,7 +12,7 @@ import org.persistence.PurchaseOrder.Status;
 import org.persistence.SalesOrder;
 import org.persistence.SalesQuotation;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-06T12:27:25")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-07T10:39:55")
 @StaticMetamodel(PurchaseOrder.class)
 public class PurchaseOrder_ { 
 

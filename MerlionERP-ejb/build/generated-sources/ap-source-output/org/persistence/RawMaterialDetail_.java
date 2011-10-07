@@ -8,7 +8,7 @@ import org.persistence.OrderPlaced;
 import org.persistence.RawMaterial;
 import org.persistence.Supplier;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-06T12:27:25")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-07T10:39:55")
 @StaticMetamodel(RawMaterialDetail.class)
 public class RawMaterialDetail_ { 
 

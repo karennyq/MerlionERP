@@ -31,6 +31,7 @@ public class PublicHolidayFacade extends AbstractFacade<PublicHoliday> implement
         super(PublicHoliday.class);
     }
 
+    /*
     @Override
     public boolean findUsedDate(Date date) {
         Query query = em.createQuery("SELECT p FROM PublicHoliday p WHERE p.ph_date=?1");
@@ -41,6 +42,19 @@ public class PublicHolidayFacade extends AbstractFacade<PublicHoliday> implement
         } else {
             return false;
         }
+    }*/
+    
+    @Override
+    public PublicHoliday getPH(Date date) {
+        Query query = em.createQuery("SELECT p FROM PublicHoliday p WHERE p.ph_date=?1");
+        query.setParameter(1, date);
+        
+        if (query.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (PublicHoliday) query.getSingleResult();
+        }
+        
     }
     
     @Override

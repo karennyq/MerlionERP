@@ -64,7 +64,7 @@ public class AccountFacade extends AbstractFacade<Account> implements AccountFac
         }
 
         account.setMax_credit_limit(account.getMax_credit_limit() + Double.parseDouble(amount));
-        content = "Maximumum Credit Limit of $" + amount + " increased successfully.";
+        content = "Maximum Credit Limit of $" + amount + " increased successfully.";
         transactionFacade.createTransaction(accountID, amount, "Credit", "Credit");
         edit(account);
         updateSoStatusbyMaxCredit(account.getCustomer());
@@ -83,7 +83,7 @@ public class AccountFacade extends AbstractFacade<Account> implements AccountFac
         } else if ((account.getMax_credit_limit() - Double.parseDouble(amount)) >= 0 && (account.getAccountStatus() == Account.AccountStatus.Existing)) {
             account.setMax_credit_limit(account.getMax_credit_limit() - Double.parseDouble(amount));
             transactionFacade.createTransaction(accountID, amount, "Credit", "Debit");
-            content = "Maximumum Credit Limit of $" + amount + " decreased successfully.";
+            content = "Maximum Credit Limit of $" + amount + " decreased successfully.";
         } else {
             System.out.println("Maximum credit limit have not been assessed!");
             content = "Not allowed. Maximum credit limit have not been assessed.";
@@ -221,7 +221,7 @@ public class AccountFacade extends AbstractFacade<Account> implements AccountFac
                             salesOrderFacade.edit(po.getSalesOrder());
                             purchaseOrderFacade.edit(po);
                         } else if (po.getCustomer().getAccount().getAccountStatus().equals(Account.AccountStatus.Blacklist)) {
-                            po.getSalesOrder().setCreditCheck(SalesOrder.CreditCheck.Not_Approved);
+                            po.getSalesOrder().setCreditCheck(SalesOrder.CreditCheck.Unapproved);
                             salesOrderFacade.edit(po.getSalesOrder());
                         } else {
                             Double amtToDeposit = amtToDeposit(po.getCustomer().getInquirer_id(), po.getDiscounted_total());

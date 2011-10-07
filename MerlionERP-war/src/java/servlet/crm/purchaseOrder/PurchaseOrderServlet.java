@@ -548,7 +548,7 @@ public class PurchaseOrderServlet extends HttpServlet {
                 salesOrderFacade.edit(po.getSalesOrder());
                 purchaseOrderFacade.edit(po);
             } else if (po.getCustomer().getAccount().getAccountStatus().equals(Account.AccountStatus.Blacklist)) {
-                po.getSalesOrder().setCreditCheck(SalesOrder.CreditCheck.Not_Approved);
+                po.getSalesOrder().setCreditCheck(SalesOrder.CreditCheck.Unapproved);
                 salesOrderFacade.edit(po.getSalesOrder());
             } else {
                 Double amtToDeposit = accountFacade.amtToDeposit(po.getCustomer().getInquirer_id(), po.getDiscounted_total());
@@ -584,7 +584,7 @@ public class PurchaseOrderServlet extends HttpServlet {
 
 
                 } else {
-                    po.getSalesOrder().setAtpCheck(SalesOrder.ATPCheck.Not_Sufficient);
+                    po.getSalesOrder().setAtpCheck(SalesOrder.ATPCheck.Insufficient);
                     po.getSalesOrder().setStatus(SalesOrder.Status.Pending);
                     break;
                 }
@@ -614,11 +614,6 @@ public class PurchaseOrderServlet extends HttpServlet {
             out.println(json);
 
         }
-
-
-
-
-
     }
 
     private void createPurchaseOrder(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
