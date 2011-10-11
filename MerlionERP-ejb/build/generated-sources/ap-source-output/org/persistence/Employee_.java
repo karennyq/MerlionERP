@@ -10,7 +10,7 @@ import org.persistence.Employee.ActiveStatus;
 import org.persistence.Message;
 import org.persistence.Role;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-07T10:39:55")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-11T17:19:03")
 @StaticMetamodel(Employee.class)
 public class Employee_ { 
 

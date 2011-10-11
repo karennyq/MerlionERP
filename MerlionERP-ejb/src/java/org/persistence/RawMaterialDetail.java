@@ -3,10 +3,7 @@ package org.persistence;
 import java.io.Serializable;
 
 import javax.persistence.*;
-import org.persistence.RawMaterial;
-import org.persistence.OrderPlaced;
 import java.util.Collection;
-import org.persistence.Supplier;
 
 @Entity
 @Table(name = "RAWMATERIALDETAIL")
@@ -14,6 +11,7 @@ public class RawMaterialDetail implements Serializable {
 	 private static final long serialVersionUID = 1L;
 
 	@Id
+        @GeneratedValue
 	private Long raw_mat_detail_id;
 	@Basic
 	private Integer lead_time;
