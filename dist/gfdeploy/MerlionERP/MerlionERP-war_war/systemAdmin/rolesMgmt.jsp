@@ -56,8 +56,14 @@
             
             
             function formatAction2(value,rowData,rowIndex){  
-                 return '<input type="button" onclick="deleteRole('+rowData.role_id+');" value="Delete"/>'; 
+                return '<input type="button" onclick="deleteRole('+rowData.role_id+');" value="Delete"/>'; 
             }  
+            
+            function reset(){
+                $('#role_id').val("");                
+                $('#role_name').val("");
+                filterTable();
+            }
         </script>
     </head>
     <body>
@@ -78,7 +84,9 @@
                         <td>
                             <input  name="role_name" id="role_name" type="text"/>
                         </td>
-                        <td><a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a></td>
+                        <td><a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+                        </td>
                     </tr>
                 </table>  
             </div>  

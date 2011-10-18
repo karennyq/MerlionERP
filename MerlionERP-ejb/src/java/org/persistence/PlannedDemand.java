@@ -18,13 +18,13 @@ public class PlannedDemand implements Serializable {
 	private Long planned_dmd_id;
 	
 	@Basic
-	private Integer boxes_to_produce;
+	private Double boxes_to_produce;
 	
 	@Basic
 	private Double hours_needed;
 	
 	@Basic
-	private Integer ot_boxes_to_produce;
+	private Double ot_boxes_to_produce;
 	
 	@Basic
 	private Double ot_hours_needed;
@@ -44,11 +44,11 @@ public class PlannedDemand implements Serializable {
 		return planned_dmd_id;
 	}
 
-	public void setBoxes_to_produce(Integer param) {
+	public void setBoxes_to_produce(Double param) {
 		this.boxes_to_produce = param;
 	}
 
-	public Integer getBoxes_to_produce() {
+	public Double getBoxes_to_produce() {
 		return boxes_to_produce;
 	}
 
@@ -60,11 +60,11 @@ public class PlannedDemand implements Serializable {
 		return hours_needed;
 	}
 
-	public void setOt_boxes_to_produce(Integer param) {
+	public void setOt_boxes_to_produce(Double param) {
 		this.ot_boxes_to_produce = param;
 	}
 
-	public Integer getOt_boxes_to_produce() {
+	public Double getOt_boxes_to_produce() {
 		return ot_boxes_to_produce;
 	}
 

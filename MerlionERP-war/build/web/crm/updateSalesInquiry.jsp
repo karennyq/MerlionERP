@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <% session.setAttribute("updateInquiryLineItemList" + request.getParameter("pre_sale_doc_id"), new ArrayList()); %>
+        <% session.setAttribute("updateInquiryLineItemList" + request.getParameter("pre_sale_doc_id"), new ArrayList());%>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file = "../global/global_include.jsp" %>
         <title>Create Sales Inquiry</title>
@@ -110,10 +110,10 @@
                         $('#contact_no').html(data.inquirer.contact_no);
                         $('#email').html(data.inquirer.email);
                         $('#fax_no').html(data.inquirer.fax_no);
-                        if(data.inquirer.convert_status == "<%=SalesLead.ConvertStatus.Not_Converted.name()%>"){
-                            $('#cust_type').html("Sales Lead");
+                        var cust_type = data.inquirer.cust_type.replace("_"," ");
+                        if(data.convert_status == "<%=SalesLead.ConvertStatus.Not_Converted.name()%>"){
+                            $('#cust_type').html("Sales Lead ("+cust_type+")");
                         }else{     
-                            var cust_type = data.inquirer.cust_type.replace("_"," ");
                             $('#cust_type').html("Customer ("+cust_type+")");
                         }
                         $('#inquiry_source').combobox('select', data.inquiry_source);
@@ -272,6 +272,14 @@
                     }
                 });
             });
+            
+            function formatBulkDiscount(value,row,rowIndex){
+                try{
+                    value = value.toFixed(2);
+                    return value+"%";
+                }catch(err){
+                } 
+            }
         </script>    
     </head>
     <body>
@@ -385,8 +393,9 @@
                                     precision:0,    
                                     required:true }
                                     }" width="15%">Quantity</th>
+                                <th field="bulk_discount" formatter="formatBulkDiscount" width ="15%">Bulk Discount</th>
                                 <th field="actual_price" width="15%" formatter="formatTotal">Total</th>
-                                <th field="actions" width="35%" formatter="formatActions"></th>
+                                <th field="actions" width="20%" formatter="formatActions"></th>
                             </tr>  
                         </thead>
                     </table>

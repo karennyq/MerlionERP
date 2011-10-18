@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <% session.setAttribute("createInquiryLineItemList", new ArrayList()); %>
+        <% session.setAttribute("createInquiryLineItemList", new ArrayList());%>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file = "../global/global_include.jsp" %>
         <title>Create Sales Inquiry</title>
@@ -124,11 +124,10 @@
                         $('#contact_no').html(data.contact_no);
                         $('#fax_no').html(data.fax_no);
                         $('#email').html(data.email);
-                        
+                        var cust_type = data.cust_type.replace("_"," ");
                         if(data.convert_status == "<%=SalesLead.ConvertStatus.Not_Converted.name()%>"){
-                            $('#cust_type').html("Sales Lead");
+                            $('#cust_type').html("Sales Lead ("+cust_type+")");
                         }else{     
-                            var cust_type = data.cust_type.replace("_"," ");
                             $('#cust_type').html("Customer ("+cust_type+")");
                         }
                     }
@@ -238,6 +237,14 @@
                     var d = '<input type="button" onclick="deletePdtItem('+index+')" value="Delete"/>';  
                     return e+d;  
                 }  
+            }
+            
+            function formatBulkDiscount(value,row,rowIndex){
+                try{
+                    value = value.toFixed(2);
+                    return value+"%";
+                }catch(err){
+                } 
             }
             
             function updateActions(){  
@@ -431,8 +438,9 @@
                                     precision:0,    
                                     required:true }
                                     }" width="15%">Quantity</th>
+                                <th field="bulk_discount" formatter="formatBulkDiscount" width ="15%">Bulk Discount</th>
                                 <th field="actual_price" width="15%" formatter="formatTotal">Total</th>
-                                <th field="actions" width="35%" formatter="formatActions"></th>
+                                <th field="actions" width="20%" formatter="formatActions"></th>
                             </tr>  
                         </thead>
                     </table>

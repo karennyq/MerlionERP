@@ -4,15 +4,12 @@
  */
 package ejb.sessionbeans.interfaces;
 
-import ejb.sessionbeans.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Local;
 import org.persistence.DailyOverview;
 import org.persistence.MonthlyOverview;
 import org.persistence.PlannedDemand;
-import org.persistence.PublicHoliday;
 
 /**
  *
@@ -35,6 +32,10 @@ public interface DailyOverviewFacadeLocal {
 
     int count();
 
-    void createDO(MonthlyOverview mo, ArrayList<PlannedDemand> mthlyPDList);
+    void createDO(MonthlyOverview mo);
+
+    public void updateDOByMonth(DailyOverview d, ArrayList<PlannedDemand> addPDList, ArrayList<PlannedDemand> subPDList, ArrayList<PlannedDemand> newPDList, ArrayList<PlannedDemand> delPDList);
+    
+    public void updateDOByDay(DailyOverview d, ArrayList<PlannedDemand> addPDList, ArrayList<PlannedDemand> subPDList, ArrayList<PlannedDemand> newPDList, ArrayList<PlannedDemand> delPDList);
     
 }

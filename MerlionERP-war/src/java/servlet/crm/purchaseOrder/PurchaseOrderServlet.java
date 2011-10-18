@@ -218,7 +218,7 @@ public class PurchaseOrderServlet extends HttpServlet {
                 c.setAccount(null);
                 c.setPreSaleDocuments(new ArrayList());
                 c.setPurchaseOrders(new ArrayList());
-                c.setSoleDistribution(new ArrayList());
+                c.setOperatingRegions(new ArrayList());
                 c.setEmployee(null);
                 sq1.setInquirer(c);
 

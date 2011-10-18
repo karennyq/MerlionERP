@@ -119,6 +119,14 @@
                     }   
                 });  */    
             });
+            
+            function reset(){
+                $('#nric').val("");                
+                $('#emp_name').val("");
+                var status=$('#active_type').combobox('setValue', 0);
+
+                filterTable();
+            }
         </script>
     </head>
     <body>
@@ -143,7 +151,9 @@
                         <td>
                             <input id="active_type" name="active_type" panelHeight="auto" class="easyui-combobox"/>
                         </td>
-                        <td><a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a></td>
+                        <td><a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+                        </td>
                     </tr>
                 </table>  
             </div>  

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.persistence.BulkDiscount;
 import org.persistence.Customer;
 import org.persistence.LineItem;
 import org.persistence.Product;
@@ -245,24 +246,24 @@ public class SalesInquiryServlet extends HttpServlet {
 
             for (SalesInquiry si : salesInquiryList) {
                 si = (SalesInquiry) ConvertToJsonObject.convert(si);
-                
+
                 if (si.getInquirer() instanceof Customer) {
                     Customer c = (Customer) si.getInquirer();
                     c.setEmployee(null);
                 }
-                
+
                 /*
                 if(si.getInquirer() instanceof Customer){
-                    Customer c = (Customer) si.getInquirer();
-                    c.setAccount(null);
-                    c.setPurchaseOrders(null);
-                    c.setEmployee(null);
-                    c.setPurchaseOrders(null);
-                    c.setPreSaleDocuments(null);
-                    c.setSoleDistribution(null);
-                    si.setInquirer((SalesLead)c);
+                Customer c = (Customer) si.getInquirer();
+                c.setAccount(null);
+                c.setPurchaseOrders(null);
+                c.setEmployee(null);
+                c.setPurchaseOrders(null);
+                c.setPreSaleDocuments(null);
+                c.setSoleDistribution(null);
+                si.setInquirer((SalesLead)c);
                 }
-
+                
                 si.getInquirer().setPreSaleDocuments(null);*/
             }
 
@@ -287,6 +288,24 @@ public class SalesInquiryServlet extends HttpServlet {
             for (LineItem li1 : lineItemList) {
                 totalPrice = totalPrice + li1.getActual_price();
                 li1 = (LineItem) ConvertToJsonObject.convert(li1);
+                Product p = productFacade.find(li1.getProduct().getProduct_id());
+
+                int pdtQty = li1.getQuantity();
+                int boxReq = 0;
+
+                for (BulkDiscount bd : p.getBulkDiscounts()) {
+                    if (pdtQty >= bd.getBoxes_required()) {
+                        if (boxReq < bd.getBoxes_required()) {
+                            boxReq = bd.getBoxes_required();
+                            li1.setBulk_discount(bd.getDiscount_given());
+                        }
+                    }
+                }
+
+                if (li1.getBulk_discount() == null) {
+                    li1.setBulk_discount(0.0);
+                }
+
             }
 
             FooterItem fi = new FooterItem("Grand Total:", totalPrice);
@@ -325,7 +344,23 @@ public class SalesInquiryServlet extends HttpServlet {
         lineItemList = (ArrayList) session.getAttribute(listName);
 
         LineItem li = lineItemList.get(listIndex);
+
         li.setQuantity(update_qty);
+        li.setBulk_discount(0.0);
+
+        int pdtQty = li.getQuantity();
+        int boxReq = 0;
+        long pdtId = li.getProduct().getProduct_id();
+        Product p = productFacade.find(pdtId);
+        
+        for (BulkDiscount bd : p.getBulkDiscounts()) {
+            if (pdtQty >= bd.getBoxes_required()) {
+                if (boxReq < bd.getBoxes_required()) {
+                    boxReq = bd.getBoxes_required();
+                    li.setBulk_discount(bd.getDiscount_given());
+                }
+            }
+        }
         li.setActual_price();
 
         session.setAttribute(listName, lineItemList);
@@ -377,6 +412,20 @@ public class SalesInquiryServlet extends HttpServlet {
             Product p = productFacade.find(Long.parseLong(pdtId));
 
             li.setQuantity(previousQty + qty);
+
+            li.setBulk_discount(0.0);
+            int pdtQty = li.getQuantity();
+            int boxReq = 0;
+
+            for (BulkDiscount bd : p.getBulkDiscounts()) {
+                if (pdtQty >= bd.getBoxes_required()) {
+                    if (boxReq < bd.getBoxes_required()) {
+                        boxReq = bd.getBoxes_required();
+                        li.setBulk_discount(bd.getDiscount_given());
+                    }
+                }
+            }
+
             li.setProduct(p);
             li.setBase_price(p.getPrice_per_box());
             li.setActual_price();
@@ -475,10 +524,10 @@ public class SalesInquiryServlet extends HttpServlet {
             c.setEmployee(null);
             c.setPurchaseOrders(null);
             c.setPreSaleDocuments(null);
-            c.setSoleDistribution(null);
+            c.setOperatingRegions(null);
             si.setInquirer((SalesLead) c);
         }
-        
+
         si.getInquirer().setPreSaleDocuments(null);
         si.setLineItems(null);
 

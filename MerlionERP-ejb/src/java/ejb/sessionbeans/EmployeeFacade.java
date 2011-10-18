@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -33,7 +32,6 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
     @PersistenceContext
     private EntityManager em;
 
-    
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -44,24 +42,24 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
     }
 
     @Override
-    public int countFilteredEmployee(int page, int rows, String sort, String order,String nric,String emp_name,String status) {
+    public int countFilteredEmployee(int page, int rows, String sort, String order, String nric, String emp_name, String status) {
         String queryStr = "SELECT e FROM Employee e WHERE e.nric LIKE ?1 AND e.emp_name LIKE ?2 AND e.active_status LIKE ?3 ORDER BY e." + sort + " " + order;
         Query query = em.createQuery(queryStr);
         //int maxResult=rows;
-        query.setParameter(1,"%"+nric+"%");
-        query.setParameter(2,"%"+emp_name+"%");
-        query.setParameter(3,"%"+status+"%");
+        query.setParameter(1, "%" + nric + "%");
+        query.setParameter(2, "%" + emp_name + "%");
+        query.setParameter(3, "%" + status + "%");
         return query.getResultList().size();
     }
 
     @Override
-    public Collection findFilteredEmployee(int page, int rows, String sort, String order,String nric,String emp_name,String status) {
+    public Collection findFilteredEmployee(int page, int rows, String sort, String order, String nric, String emp_name, String status) {
         String queryStr = "SELECT e FROM Employee e WHERE e.nric LIKE ?1 AND e.emp_name LIKE ?2 AND e.active_status LIKE ?3 ORDER BY e." + sort + " " + order;
         Query query = em.createQuery(queryStr);
         //int maxResult=rows;
-        query.setParameter(1,"%"+nric+"%");
-        query.setParameter(2,"%"+emp_name+"%");
-        query.setParameter(3,"%"+status+"%");
+        query.setParameter(1, "%" + nric + "%");
+        query.setParameter(2, "%" + emp_name + "%");
+        query.setParameter(3, "%" + status + "%");
         int firstResult = (page - 1) * rows;
         query.setMaxResults(rows);
         query.setFirstResult(firstResult);
@@ -90,7 +88,7 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
 //            r.set
 //        }
 //        
-        
+
         emp.setEmp_name(emp_name);
         emp.setEmail(email);
         emp.setNric(nric);
@@ -99,19 +97,19 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
         emp.setRoles(roleList);
         create(emp);
     }
-    
+
     @Override
-    public void updateEmployee(String emp_id,String emp_name, String email, String nric, ArrayList<Role> roleList) throws NoSuchAlgorithmException {
-        
+    public void updateEmployee(String emp_id, String emp_name, String email, String nric, ArrayList<Role> roleList) throws NoSuchAlgorithmException {
+
         Employee emp = find(Long.parseLong(emp_id));
-        
+
         emp.setEmp_name(emp_name);
         emp.setEmail(email);
         emp.setNric(nric);
         emp.setActive_status(ActiveStatus.Active);
-        
+
         emp.setRoles(roleList);
-        
+
         edit(emp);
     }
 
@@ -142,30 +140,30 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
             return null; //Not Exist
         }
     }
-    
+
     @Override
-    public boolean updateEmployeeIcExist(String nric,String emp_id) {
+    public boolean updateEmployeeIcExist(String nric, String emp_id) {
         Query query = em.createQuery("SELECT e FROM Employee e WHERE e.nric=?1 AND e.emp_id<>?2");
         query.setParameter(1, nric);
-        query.setParameter(2,Long.parseLong(emp_id));
+        query.setParameter(2, Long.parseLong(emp_id));
         boolean r = query.getResultList().isEmpty();
         return (!r);
     }
 
     @Override
-    public boolean updateEmployeeEmailExist(String email,String emp_id) {
+    public boolean updateEmployeeEmailExist(String email, String emp_id) {
         Query query = em.createQuery("SELECT e FROM Employee e WHERE e.email=?1 AND e.emp_id<>?2");
         query.setParameter(1, email);
-        query.setParameter(2,Long.parseLong(emp_id));
+        query.setParameter(2, Long.parseLong(emp_id));
         boolean r = query.getResultList().isEmpty();
         return (!r);
     }
 
     @Override
-    public Employee updateCheckExistence(String username,String emp_id) {
+    public Employee updateCheckExistence(String username, String emp_id) {
         try {
             Query query = em.createQuery("SELECT e FROM Employee e WHERE e.nric='" + username + "' AND e.emp_id<>?2");
-            query.setParameter(2,Long.parseLong(emp_id));
+            query.setParameter(2, Long.parseLong(emp_id));
             Employee emp = (Employee) query.getSingleResult();
             return emp; //Exist
         } catch (NoResultException nre) {
@@ -228,32 +226,27 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
         }
         edit(emp);
     }
-    
+
     @Override
-    public void updateActiveStatus(String emp_id, String status)
-    {
+    public void updateActiveStatus(String emp_id, String status) {
         long emp_idL = Long.parseLong(emp_id);
         Employee emp = find(emp_idL);
-        
-        if(status.equalsIgnoreCase("Active"))
-         {
-             emp.setActive_status(Employee.ActiveStatus.Active);
-         }
-         else if(status.equalsIgnoreCase("Inactive"))
-         {
-             emp.setActive_status(Employee.ActiveStatus.Inactive);
-         }
-        
+
+        if (status.equalsIgnoreCase("Active")) {
+            emp.setActive_status(Employee.ActiveStatus.Active);
+        } else if (status.equalsIgnoreCase("Inactive")) {
+            emp.setActive_status(Employee.ActiveStatus.Inactive);
+        }
+
         edit(emp);
     }
-    
+
     @Override
-    public void resetPassword(String emp_id) throws Exception
-    {
+    public void resetPassword(String emp_id) throws Exception {
         long emp_idL = Long.parseLong(emp_id);
         Employee emp = find(emp_idL);
         String nric = emp.getNric();
-        
+
         String password = nric;
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
@@ -265,21 +258,20 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
             sb1.append(Integer.toString((byteData1[i] & 0xff) + 0x100, 16).substring(1));
         }
         String hashedEmpPassword = sb1.toString();
-        
+
         emp.setPassword(hashedEmpPassword);
-        
+
         edit(emp);
-        
-        
+
+
     }
-    
+
     @Override
-    public void changePassword(String emp_id,String new_password) throws Exception
-    {
-        System.out.print(emp_id+"   "+new_password);
+    public void changePassword(String emp_id, String new_password) throws Exception {
+        System.out.print(emp_id + "   " + new_password);
         long emp_idL = Long.parseLong(emp_id);
         Employee emp = find(emp_idL);
-        
+
         String password = new_password;
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
@@ -291,34 +283,86 @@ public class EmployeeFacade extends AbstractFacade<Employee> implements Employee
             sb1.append(Integer.toString((byteData1[i] & 0xff) + 0x100, 16).substring(1));
         }
         String hashedEmpPassword = sb1.toString();
-        
-        emp.setPassword(hashedEmpPassword);
-        
-        edit(emp);
-        
-        
-    }
- @Override
-    public Collection salesExecutiveEmployees() {
-        
-        Query query = em.createQuery("SELECT e FROM Employee e");
-       // Employee e = (Employee) query.getResultList();
-        
-        ArrayList<Employee> empList = new ArrayList<Employee>();
-         
-        for(Object o: query.getResultList()){
-             System.out.println("EMP");
 
-             Employee e = (Employee)o;
-             for(Role r: e.getRoles()){
-                   System.out.println("ROLES");
-                 if(r.getRole_name().equalsIgnoreCase("Sales Executive")){
+        emp.setPassword(hashedEmpPassword);
+
+        edit(emp);
+
+
+    }
+
+    @Override
+    public Collection salesExecutiveEmployees() {
+
+        Query query = em.createQuery("SELECT e FROM Employee e");
+        // Employee e = (Employee) query.getResultList();
+
+        ArrayList<Employee> empList = new ArrayList<Employee>();
+
+        for (Object o : query.getResultList()) {
+            System.out.println("EMP");
+
+            Employee e = (Employee) o;
+            for (Role r : e.getRoles()) {
+                System.out.println("ROLES");
+                if (r.getRole_name().equalsIgnoreCase("Sales Executive")) {
                     empList.add(e);
                 }
-             }
+            }
         }
-        System.out.println("SALES EXE: " +empList.size());
+        System.out.println("SALES EXE: " + empList.size());
         return (Collection<Employee>) empList;
     }
-    
+
+    @Override
+    public int countFilteredSalesExEmployee(int page, int rows, String sort, String order, String emp_name) {
+        String queryStr = "SELECT e FROM Employee e WHERE e.emp_name LIKE ?1 AND e.active_status=?2 ORDER BY e." + sort + " " + order;
+        Query query = em.createQuery(queryStr);
+        //int maxResult=rows;
+        query.setParameter(1, "%" + emp_name + "%");
+        query.setParameter(2, Employee.ActiveStatus.Active);
+
+        ArrayList<Employee> empList = new ArrayList<Employee>();
+
+        for (Object o : query.getResultList()) {
+            System.out.println("EMP");
+
+            Employee e = (Employee) o;
+            for (Role r : e.getRoles()) {
+                System.out.println("ROLES");
+                if (r.getRole_name().equalsIgnoreCase("Sales Executive")) {
+                    empList.add(e);
+                }
+            }
+        }
+        System.out.println("SALES EXE: " + empList.size());
+
+        return empList.size();
+    }
+
+    @Override
+    public Collection findFilteredSalesExEmployee(int page, int rows, String sort, String order, String nric, String emp_name) {
+        String queryStr = "SELECT e FROM Employee e WHERE e.emp_name LIKE ?1 AND e.active_status=?2 ORDER BY e." + sort + " " + order;
+        Query query = em.createQuery(queryStr);
+        //int maxResult=rows;
+        query.setParameter(1, "%" + emp_name + "%");
+        query.setParameter(2, Employee.ActiveStatus.Active);
+
+        ArrayList<Employee> empList = new ArrayList<Employee>();
+
+        for (Object o : query.getResultList()) {
+            System.out.println("EMP");
+
+            Employee e = (Employee) o;
+            for (Role r : e.getRoles()) {
+                System.out.println("ROLES");
+                if (r.getRole_name().equalsIgnoreCase("Sales Executive")) {
+                    empList.add(e);
+                }
+            }
+        }
+        System.out.println("SALES EXE: " + empList.size());
+
+        return (Collection<Employee>) empList;
+    }
 }

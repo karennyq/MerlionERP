@@ -42,6 +42,17 @@
             function onClickConfirm(){
                 $('#createSales').panel('expand');
             }
+            
+            $(document).ready(function(){
+                $('#cust_type').combobox({  
+                    url:'../CustomerServlet?action=loadPage&content=dropdown',  
+                    valueField:'text',  
+                    textField:'text',
+                    editable:false,
+                    required:true,
+                    formatter:comboboxFomatter
+                });
+            });
         </script>    
     </head>
     <body>
@@ -81,7 +92,13 @@
                     <tr>
                         <td class="tableForms_label">Address:</td>  
                         <td class="tableForms_userInput"><textarea class="easyui-validatebox" id="company_add" name="company_add"></textarea></td>  
-                    </tr>  
+                    </tr> 
+                    <tr>
+                        <td class="tableForms_label">Sales Lead Type:</td>  
+                        <td class="tableForms_userInput">
+                            <select id="cust_type" name="cust_type" panelHeight="auto" class="easyui-combobox"></select>
+                        </td> 
+                    </tr>
                     <tr>
                         <td class="tableForms_label">Remarks:</td>  
                         <td class="tableForms_userInput"><textarea id="remarks" name="remarks"></textarea></td>
@@ -91,7 +108,7 @@
             <br/>
             <div class="form_buttons">
                 <input type="submit" onclick="onClickConfirm();" value="Create"/>
-                <input type="button" onclick="confirmReset('ff','Clear the form?')" value="Clear" />
+                <input type="button" onclick="confirmReset('ff','Do you want to clear the form?')" value="Clear" />
             </div> 
         </form>
     </body>

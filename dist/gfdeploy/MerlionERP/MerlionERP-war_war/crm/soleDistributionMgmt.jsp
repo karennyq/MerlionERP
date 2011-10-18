@@ -32,6 +32,13 @@
                 $('#tt').datagrid({url:f_url});
                 $('#tt').datagrid('load');
             }
+            
+            function reset(){
+                $('#f_id').val("");
+                $('#f_name').val("");
+                $('#f_region').val("");
+                filterTable();
+            }
         </script>
     </head>
     <body>
@@ -56,7 +63,18 @@
                         <td>
                             <input id="f_region" style="width:100px" type="text"/>
                         </td>
-                        <td><a href="#" onclick="filterTable()" class="easyui-linkbutton" iconCls="icon-search"></a></td>
+                    </tr>
+                    <tr>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td>
+                            <a href="#" onclick="filterTable()" class="easyui-linkbutton" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+
+                        </td>
                     </tr>
                 </table>  
             </div>  

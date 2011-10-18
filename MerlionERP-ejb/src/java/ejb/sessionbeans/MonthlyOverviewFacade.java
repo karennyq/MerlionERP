@@ -7,6 +7,8 @@ package ejb.sessionbeans;
 import ejb.sessionbeans.interfaces.MonthlyOverviewFacadeLocal;
 import ejb.sessionbeans.interfaces.PlannedDemandFacadeLocal;
 import ejb.sessionbeans.interfaces.ProductFacadeLocal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -53,16 +55,74 @@ public class MonthlyOverviewFacade extends AbstractFacade<MonthlyOverview> imple
     }
 
     @Override
-    public MonthlyOverview createMO(MonthlyOverview mo, ArrayList<PlannedDemand> pdList) {
-        create(mo);
-        
-        for (PlannedDemand pd: pdList) {
-            pdFacade.create(pd);
-            mo.getPlannedDemand().add(pd);
+    public MonthlyOverview createMO(MonthlyOverview m, ArrayList<PlannedDemand> pdList) {
+        //create planned demand record
+        for (PlannedDemand mPD: pdList) {
+            mPD.setOt_boxes_to_produce(0.00);
+            mPD.setOt_hours_needed(0.00);
+            pdFacade.create(mPD);
+            m.getPlannedDemand().add(mPD);
         }
         
-        edit(mo);
+        create(m);
+        return m;
+    }
+
+    @Override
+    public void updateMO(MonthlyOverview m, ArrayList<PlannedDemand> addPDList, ArrayList<PlannedDemand> subPDList, ArrayList<PlannedDemand> newPDList, ArrayList<PlannedDemand> delPDList) {
+        NumberFormat formatter = new DecimalFormat("0.00");
         
-        return mo;
+        for (PlannedDemand delPD : delPDList) {
+            for (PlannedDemand originalPD : m.getPlannedDemand()) {
+                if (delPD.getProduct().getProduct_id() == originalPD.getProduct().getProduct_id()) {
+                    m.getPlannedDemand().remove(originalPD);
+                    edit(m);
+                    pdFacade.remove(originalPD);
+                }
+            }
+        }
+        
+        for (PlannedDemand addPD : addPDList) {
+            for (PlannedDemand originalPD : m.getPlannedDemand()) {
+                if (addPD.getProduct().getProduct_id() == originalPD.getProduct().getProduct_id()) {
+                    originalPD.setBoxes_to_produce(originalPD.getBoxes_to_produce() + addPD.getBoxes_to_produce());
+                    originalPD.setHours_needed(Double.parseDouble(formatter.format(originalPD.getBoxes_to_produce()/originalPD.getProduct().getProduction_capacity())));
+                    pdFacade.edit(originalPD);
+                    break;
+                }
+            }
+        }
+        
+        for (PlannedDemand subPD : subPDList) {
+            for (PlannedDemand originalPD : m.getPlannedDemand()) {
+                if (subPD.getProduct().getProduct_id() == originalPD.getProduct().getProduct_id()) {
+                    originalPD.setBoxes_to_produce(originalPD.getBoxes_to_produce() - subPD.getBoxes_to_produce());
+                    originalPD.setHours_needed(Double.parseDouble(formatter.format(originalPD.getBoxes_to_produce()/originalPD.getProduct().getProduction_capacity())));
+                    pdFacade.edit(originalPD);
+                    break;
+                }
+            }
+        }
+        
+        for (PlannedDemand newPD : newPDList) {
+            PlannedDemand pd = new PlannedDemand();
+            pd.setProduct(newPD.getProduct());
+            pd.setBoxes_to_produce(newPD.getBoxes_to_produce());
+            pd.setHours_needed(Double.parseDouble(formatter.format(pd.getBoxes_to_produce() / pd.getProduct().getProduction_capacity())));
+            pd.setOt_boxes_to_produce(0.00);
+            pd.setOt_hours_needed(0.00);
+            pdFacade.create(pd);
+            m.getPlannedDemand().add(pd);
+            edit(m);
+        }
+        
+        double usedCapacity = 0;
+        
+        for (PlannedDemand pd : m.getPlannedDemand()) {
+            usedCapacity = usedCapacity + pd.getHours_needed();
+        }
+        
+        m.setUtilization(Double.parseDouble(formatter.format(usedCapacity * 100 / m.getCapacity())));
+        edit(m);
     }
 }

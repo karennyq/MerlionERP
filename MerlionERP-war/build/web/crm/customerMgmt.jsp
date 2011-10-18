@@ -23,6 +23,21 @@
             function formatAction(value,rowData,rowIndex){  
                 return '<input type="button" onclick="goUpdate('+rowData.inquirer_id+');" value="Update"/>';    
             }  
+            
+             function reset(){
+                $('#inquirer_id').val("");
+                $('#company_name').val("");
+                filterTable();
+            }
+            
+            function filterTable(){
+                var salesLeadID=$('#inquirer_id').val();
+                var compName=$('#company_name').val();
+                var f_url='../CustomerServlet?action=loadPage&content=table&inquirer_id='+salesLeadID+'&company_name='+compName;
+                $('#tt').datagrid({url:f_url});  
+                $('#tt').datagrid('load');
+            }
+            
         </script>
     </head>
     <body>
@@ -37,13 +52,16 @@
                     <tr>
                         <td>Customer ID:</td>
                         <td>
-                            <input type="text"/>
+                            <input name="inquirer_id" id="inquirer_id" type="text"/>
                         </td>
                         <td>Company Name:</td>
                         <td>
-                            <input  type="text"/>
+                            <input name="company_name" id="company_name" type="text"/>
                         </td>
-                        <td><a href="#" class="easyui-linkbutton" iconCls="icon-search"></a></td>
+                        <td>
+                            <a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+                        </td>
                     </tr>
                 </table>  
             </div>  
@@ -56,9 +74,9 @@
                    rownumbers="false">  
                 <thead>  
                     <tr> 
-                        <th field="inquirer_id" width="10%">ID</th>  
-                        <th field="company_name" width="50%">Company Name</th>
-                        <th field="convert_date" width="30%">Date & Time Created</th> 
+                        <th field="inquirer_id" width="10%" sortable="true">ID</th>  
+                        <th field="company_name" width="50%" sortable="true">Company Name</th>
+                        <th field="convert_date" width="30%" sortable="true">Date & Time Created</th> 
                         <th field="action" width="10%" formatter="formatAction"></th>
                     </tr>  
                 </thead>  

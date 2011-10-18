@@ -4,6 +4,7 @@
  */
 package ejb.sessionbeans.interfaces;
 
+import java.util.Collection;
 import java.util.List;
 import javax.ejb.Local;
 import org.persistence.Employee;
@@ -41,10 +42,6 @@ public interface EmployeeFacadeLocal {
 
 //    public void creatEmployee(java.lang.String emp_name, java.lang.String email, java.lang.String nric) throws java.security.NoSuchAlgorithmException;
     //  public java.util.Collection findFilteredEmployee(int page, int rows, java.lang.String sort, java.lang.String order);
-    public java.util.Collection findFilteredEmployee(int page, int rows, java.lang.String sort, java.lang.String order, java.lang.String nric, java.lang.String emp_name, java.lang.String status);
-
-    public int countFilteredEmployee(int page, int rows, java.lang.String sort, java.lang.String order, java.lang.String nric, java.lang.String emp_name, java.lang.String status);
-
     public void creatEmployee(java.lang.String emp_name, java.lang.String email, java.lang.String nric, java.util.ArrayList<org.persistence.Role> roleList) throws java.security.NoSuchAlgorithmException;
 
     public void updateEmployee(java.lang.String emp_id, java.lang.String emp_name, java.lang.String email, java.lang.String nric, java.util.ArrayList<org.persistence.Role> roleList) throws java.security.NoSuchAlgorithmException;
@@ -61,5 +58,13 @@ public interface EmployeeFacadeLocal {
 
     public void changePassword(String emp_id, String new_password) throws Exception;
 
-    public java.util.Collection salesExecutiveEmployees();
+    public Collection salesExecutiveEmployees();
+
+    public Collection findFilteredEmployee(int page, int rows, String sort, String order, String nric, String emp_name, String status);
+
+    public int countFilteredEmployee(int page, int rows, String sort, String order, String nric, String emp_name, String status);
+
+    public Collection findFilteredSalesExEmployee(int page, int rows, String sort, String order, String nric, String emp_name);
+
+    public int countFilteredSalesExEmployee(int page, int rows, String sort, String order, String emp_name);
 }

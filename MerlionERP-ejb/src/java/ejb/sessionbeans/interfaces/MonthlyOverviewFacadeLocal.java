@@ -34,4 +34,6 @@ public interface MonthlyOverviewFacadeLocal {
     boolean checkPPDone(String month, Integer year);
 
     MonthlyOverview createMO(MonthlyOverview mo, ArrayList<PlannedDemand> pdList);
+
+    public void updateMO(MonthlyOverview m, ArrayList<PlannedDemand> addPDList, ArrayList<PlannedDemand> subPDList, ArrayList<PlannedDemand> newPDList, ArrayList<PlannedDemand> delPDList);
 }

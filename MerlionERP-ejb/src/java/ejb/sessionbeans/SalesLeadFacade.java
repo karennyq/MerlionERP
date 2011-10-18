@@ -64,17 +64,17 @@ public class SalesLeadFacade extends AbstractFacade<SalesLead> implements SalesL
     }
 
     @Override
-    public Collection findNotConvertedSalesLead(String companyName) {
+    public Collection findNotConvertedSalesLead(int page, int rows, String sort, String order, String companyName) {
         // Query query = em.createQuery("SELECT s FROM SalesLead s WHERE TYPE(s)<>Customer");
-        Query query = em.createQuery("SELECT s FROM SalesLead s WHERE s.convert_status=?1 AND s.company_name LIKE ?2");
+        Query query = em.createQuery("SELECT s FROM SalesLead s WHERE s.convert_status=?1 AND s.company_name LIKE ?2 ORDER BY s." + sort + " " + order);
         query.setParameter(1, SalesLead.ConvertStatus.valueOf("Not_Converted"));
         query.setParameter(2, "%"+companyName+"%");
         return (Collection<SalesLead>) query.getResultList();
     }
 
     @Override
-    public int countNotConvertedSalesLead(String companyName) {
-        Query query = em.createQuery("SELECT s FROM SalesLead s WHERE s.convert_status=?1 AND s.company_name LIKE ?2");
+    public int countNotConvertedSalesLead(int page, int rows, String sort, String order, String companyName) {
+        Query query = em.createQuery("SELECT s FROM SalesLead s WHERE s.convert_status=?1 AND s.company_name LIKE ?2 ORDER BY s." + sort + " " + order);
         query.setParameter(1, SalesLead.ConvertStatus.valueOf("Not_Converted"));
         query.setParameter(2, "%"+companyName+"%");
         return query.getResultList().size();
@@ -82,7 +82,7 @@ public class SalesLeadFacade extends AbstractFacade<SalesLead> implements SalesL
 
     @Override
     public void createSalesLead(String company_name, String contact_person, String contact_no, String email, String remarks,
-            String company_add, String fax_no, String country, String city) {
+            String company_add, String fax_no, String country, String city, String cust_type) {
         SalesLead sl = new SalesLead();
         Date create_date_time = new Date();
         sl.setCompany_name(company_name);
@@ -97,7 +97,7 @@ public class SalesLeadFacade extends AbstractFacade<SalesLead> implements SalesL
         sl.setCity(city);
         sl.setSales_lead_status(SalesLeadStatus.Active);
         sl.setConvert_status(ConvertStatus.Not_Converted);
-
+        sl.setCust_type(SalesLead.CustomerType.valueOf(cust_type));
         create(sl);
     }
 
@@ -111,7 +111,7 @@ public class SalesLeadFacade extends AbstractFacade<SalesLead> implements SalesL
     
     @Override
     public void updateSalesLead(String inquirer_id, String company_name, String contact_person, String contact_no, String email,
-            String remarks, String company_add, String fax_no, String country, String city, String sales_lead_status) {
+            String remarks, String company_add, String fax_no, String country, String city, String sales_lead_status, String cust_type) {
         SalesLead sl = find(Long.parseLong(inquirer_id));
         Date create_date_time = new Date();
         sl.setCompany_name(company_name);
@@ -124,6 +124,8 @@ public class SalesLeadFacade extends AbstractFacade<SalesLead> implements SalesL
         sl.setCreate_date_time(create_date_time);
         sl.setCountry(country);
         sl.setCity(city);
+        sl.setCust_type(SalesLead.CustomerType.valueOf(cust_type));
+        
         if (sales_lead_status.equalsIgnoreCase("Active")) {
             sl.setSales_lead_status(SalesLeadStatus.Active);
         } else if (sales_lead_status.equalsIgnoreCase("Inactive")) {

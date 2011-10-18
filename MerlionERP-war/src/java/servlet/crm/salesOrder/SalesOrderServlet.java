@@ -514,7 +514,7 @@ public class SalesOrderServlet extends HttpServlet {
         c.setEmployee(null);
         c.setPurchaseOrders(null);
         c.setPreSaleDocuments(null);
-        c.setSoleDistribution(null);
+        c.setOperatingRegions(null);
         so.setLineItems(null);
         so.setBackOrders(null);
         for (DeliveryOrder o : so.getDeliveryOrders()) {

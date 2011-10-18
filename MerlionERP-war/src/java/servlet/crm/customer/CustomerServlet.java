@@ -83,77 +83,82 @@ public class CustomerServlet extends HttpServlet {
             throws Exception {
         String content = request.getParameter("content");
         if (content.equals("table")) {
-            
-            
-            ArrayList<Customer> customerList = new ArrayList(customerFacade.findFilteredCustomers());
+
+            //paging
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "inquirer_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
+            //filter
+            String inquirer_id = (request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : "";
+            String company_name = (request.getParameter("company_name") != null) ? request.getParameter("company_name") : "";
+
+
+            ArrayList<Customer> customerList = new ArrayList(customerFacade.findFilteredCustomers(page, rows, sort, order, inquirer_id, company_name));
 
             for (Customer c : customerList) {
-//                c.getAccount().setCustomer(null);
-                 c= (Customer) ConvertToJsonObject.convert(c);
-             
-            }
-          
-            ArrayList<Customer> jsonList = new ArrayList<Customer>();
-            // int totalRecord = employeeFacade.countNotConvertedSalesLead();
-
-          /*  for (Customer c : customerList) {
-                Customer je = new Customer();
-                
-               je.setInquirer_id(c.getInquirer_id());
-              
-               je.setCompany_name(c.getCompany_name());
-             
-               je.setCreate_date_time(c.getCreate_date_time());
-                            
-                jsonList.add(je);
-            }*/
-
-           
-            System.out.println(customerList.size());
-            int totalReord = customerFacade.count();
-            String json = gson.toJson(new JsonReturnTable(customerList.size() + "", customerList));
-            out.println(json);
-        }
-        if (content.equals("tableTRSF")) {
-            String emp_id = request.getParameter("emp_id");
-            ArrayList<Customer> customerList = new ArrayList(customerFacade.findFilteredCustomers(emp_id));
-
-            for (Customer c : customerList) {
-//                c.getAccount().setCustomer(null);
                 c = (Customer) ConvertToJsonObject.convert(c);
 
             }
 
+            ArrayList<Customer> jsonList = new ArrayList<Customer>();
+            // int totalRecord = employeeFacade.countNotConvertedSalesLead();
+
 
             System.out.println(customerList.size());
-            int totalReord = customerFacade.count();
-            String json = gson.toJson(new JsonReturnTable(totalReord + "", customerList));
+            int totalReord = customerFacade.countFilteredCustomers(page, rows, sort, order, inquirer_id, company_name);
+            String json = gson.toJson(new JsonReturnTable(customerList.size() + "", customerList));
             out.println(json);
-        }
-
-        if (content.equals("details")) {
-          
-            long cId = Long.parseLong(request.getParameter("inquirer_id"));
-            Customer c = customerFacade.find(cId);
-            c= (Customer) ConvertToJsonObject.convert(c);
-            String json = gson.toJson(c);
-            out.println(json);
-        }
-        if (content.equals("dialog")) {
+        } else if (content.equals("tableTRSF")) {
+            String emp_id = (request.getParameter("emp_id") != null) ? request.getParameter("emp_id") : "";
            
-            ArrayList <Customer> customerList = new ArrayList(customerFacade.findFilteredCustomers());
-            
-            int totalReord = customerFacade.count();
-            
-            for (Customer c : customerList) {
-//                c.getAccount().setCustomer(null);
-                 c= (Customer)ConvertToJsonObject.convert(c);
+            ArrayList<Customer> customerList = new ArrayList<Customer>();
+            int totalReord = customerList.size();
+            if (!emp_id.equals("")) {
+                customerList = new ArrayList<Customer>(customerFacade.findFilteredCustomers(emp_id));
+
+                for (Customer c : customerList) {
+                    c = (Customer) ConvertToJsonObject.convert(c);
+
+                }
+
+                System.out.println(customerList.size());
+                totalReord = customerFacade.count();
             }
             String json = gson.toJson(new JsonReturnTable(totalReord + "", customerList));
             out.println(json);
-        }
-        if (content.equals("dropdown")) {
-            
+        } else if (content.equals("details")) {
+
+            long cId = Long.parseLong(request.getParameter("inquirer_id"));
+            Customer c = customerFacade.find(cId);
+            c = (Customer) ConvertToJsonObject.convert(c);
+            String json = gson.toJson(c);
+            out.println(json);
+        } else if (content.equals("dialog")) {
+            //paging
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "inquirer_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
+            //filter
+            String inquirer_id = (request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : "";
+            String company_name = (request.getParameter("company_name") != null) ? request.getParameter("company_name") : "";
+
+            ArrayList<Customer> customerList = new ArrayList(customerFacade.findFilteredCustomers(page, rows, sort, order, inquirer_id, company_name));
+
+
+            int totalReord = customerFacade.countFilteredCustomers(page, rows, sort, order, inquirer_id, company_name);
+
+            for (Customer c : customerList) {
+//                c.getAccount().setCustomer(null);
+                c = (Customer) ConvertToJsonObject.convert(c);
+            }
+            String json = gson.toJson(new JsonReturnTable(totalReord + "", customerList));
+            out.println(json);
+        } else if (content.equals("dropdown")) {
+
             //String selected= request.getParameter("selected");
             String json = JsonReturnDropDown.populate(Customer.CustomerType.values());
             out.println(json);
@@ -163,13 +168,13 @@ public class CustomerServlet extends HttpServlet {
     private void updateCustSE(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws Exception {
         String[] chk_status = request.getParameterValues("selected_inquirer_id");
         String emp2_id = request.getParameter("emp2_id");
-        
+
 //System.out.println(emp2_id+"!!!!!!");
-        if ((emp2_id == null)||(emp2_id.equals(""))) {
+        if ((emp2_id == null) || (emp2_id.equals(""))) {
             String content = "Please select the targeted sales exacutive.";
             String json = gson.toJson(new JsonReturnMsg("Re-Assign Customer", content, "error"));
             out.println(json);
-        }else if (chk_status != null) {
+        } else if (chk_status != null) {
             if (chk_status.length != 0) {
 
                 customerFacade.updateCustSE(chk_status, emp2_id);
@@ -191,12 +196,11 @@ public class CustomerServlet extends HttpServlet {
 
     }
 
-    
     private void createCustomer(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         String json;
         String content;
-        
+
         String inquirer_id = request.getParameter("inquirer_id");
         String emp_id = request.getParameter("emp_id");
         String company_name = request.getParameter("company_name");
@@ -209,14 +213,14 @@ public class CustomerServlet extends HttpServlet {
         String cust_type = request.getParameter("cust_type");
         String country = request.getParameter("country");
         String city = request.getParameter("city");
-        
+
         if (inquirer_id.equals("") || emp_id.equals("")) {
             content = "Sales Lead and Sales Executive ID must be specified.";
             json = gson.toJson(new JsonReturnMsg("Create Customer", content, "error"));
         } else {
-            customerFacade.createCustomer(inquirer_id, emp_id,company_name, contact_person, contact_no, email, remarks, company_add, fax_no, cust_type, country, city);
+            customerFacade.createCustomer(inquirer_id, emp_id, company_name, contact_person, contact_no, email, remarks, company_add, fax_no, cust_type, country, city);
             content = "Create Customer Successful.";
-        json = gson.toJson(new JsonReturnMsg("Create Customer", content, "info"));
+            json = gson.toJson(new JsonReturnMsg("Create Customer", content, "info"));
         }
         out.println(json);
     }
@@ -225,7 +229,7 @@ public class CustomerServlet extends HttpServlet {
             throws Exception {
         String content = "";
         String json = "";
-        
+
         String inquirer_id = request.getParameter("inquirer_id");
         String emp_id = request.getParameter("emp_id");
         String emp_name = request.getParameter("emp_name");
@@ -239,7 +243,7 @@ public class CustomerServlet extends HttpServlet {
         String cust_type = request.getParameter("cust_type");
         String country = request.getParameter("country");
         String city = request.getParameter("city");
-        
+
         if (emp_id.equals("")) {
             content = "Sales Executive ID must be specified.";
             json = gson.toJson(new JsonReturnMsg("Create Customer", content, "error"));
@@ -254,7 +258,7 @@ public class CustomerServlet extends HttpServlet {
             }
         }
         out.println(json);
-   }
+    }
 
     private void updateCustomer(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {

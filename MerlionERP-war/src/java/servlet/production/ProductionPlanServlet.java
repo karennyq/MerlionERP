@@ -24,10 +24,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.persistence.DailyOverview;
 import org.persistence.MonthlyOverview;
 import org.persistence.PlannedDemand;
 import org.persistence.Product;
 import org.persistence.PublicHoliday;
+import org.persistence.WeeklyOverview;
 import util.JsonReturnMsg;
 import util.JsonReturnTable;
 
@@ -70,8 +72,8 @@ public class ProductionPlanServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String action = request.getParameter("action");
         try {
-            if (action.equals("loadTable")) {
-                loadTable(request, response, out);
+            if (action.equals("loadMonthlyTable")) {
+                loadMonthlyTable(request, response, out);
                 
             } else if (action.equals("checkPPDone")) {
                 checkPPDone(request, response, out);
@@ -94,6 +96,24 @@ public class ProductionPlanServlet extends HttpServlet {
             } else if (action.equals("getMODetails")) {
                 getMODetails(request, response, out);
                 
+            } else if (action.equals("updateMPP")) {
+                updateMPP(request, response, out);
+                
+            } else if (action.equals("loadWeeklyTable")) {
+                loadWeeklyTable(request, response, out);
+                
+            } else if (action.equals("loadDailyTable")) {
+                loadDailyTable(request, response, out);
+                
+            } else if (action.equals("getDODetails")) {
+                getDODetails(request, response, out);
+                
+            } else if (action.equals("updateDPP")) {
+                updateDPP(request, response, out);
+                
+            } else if (action.equals("checkMonthAndYear")) {
+                checkMonthAndYear(request, response, out);
+                
             }
 
         } catch (Exception ex) {
@@ -106,7 +126,7 @@ public class ProductionPlanServlet extends HttpServlet {
         }
     }
     
-    private void loadTable(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+    private void loadMonthlyTable(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
         ArrayList<MonthlyOverview> moList = new ArrayList<MonthlyOverview>(moFacade.findAll());
         int totalRecord = moFacade.count();
@@ -119,6 +139,43 @@ public class ProductionPlanServlet extends HttpServlet {
         }
         
         String json = gson.toJson(new JsonReturnTable(totalRecord + "", moList));
+        out.println(json);
+    }
+    
+    private void loadWeeklyTable(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String mo_id = request.getParameter("mo_id");
+        ArrayList<WeeklyOverview> woList = woFacade.findWeekInMonth(Long.parseLong(mo_id));
+
+        for (WeeklyOverview wo : woList) {
+            wo.setMonthlyOverview(null);
+            wo.setPlannedDemand(null);
+            wo.setDailyOverviews(null);
+        }
+        
+        int totalRecord = woList.size();
+        
+        String json = gson.toJson(new JsonReturnTable(totalRecord + "", woList));
+        out.println(json);
+    }
+    
+    private void loadDailyTable(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String wo_id = request.getParameter("wo_id");
+        WeeklyOverview wo = woFacade.find(Long.parseLong(wo_id));
+        ArrayList <DailyOverview> doList = new ArrayList <DailyOverview> ();
+
+        for (DailyOverview d : wo.getDailyOverviews()) {
+            d.setDailyActivity(null);
+            d.setPlannedDemand(null);
+            d.setPublicHoliday(null);
+            d.setWeeklyOverview(null);
+            doList.add(d);
+        }
+        
+        int totalRecord = doList.size();
+        
+        String json = gson.toJson(new JsonReturnTable(totalRecord + "", doList));
         out.println(json);
     }
     
@@ -140,6 +197,10 @@ public class ProductionPlanServlet extends HttpServlet {
         
         String year = request.getParameter("year");
         String month = request.getParameter("month");
+        String listName = request.getParameter("listName");
+        
+        HttpSession session = request.getSession();
+        session.setAttribute(listName, new ArrayList());
         
         Calendar cal = Calendar.getInstance();
         cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, 1);
@@ -205,13 +266,13 @@ public class ProductionPlanServlet extends HttpServlet {
         HttpSession session = request.getSession();
         ArrayList<PlannedDemand> pdList = (ArrayList<PlannedDemand>) session.getAttribute(listName);
         
-        double usedCapacity = Double.parseDouble(quantity) / pFacade.find(Long.parseLong(product_id)).getProduction_capacity();
+        Double usedCapacity = Double.parseDouble(quantity) / pFacade.find(Long.parseLong(product_id)).getProduction_capacity();
         
         for (PlannedDemand pd: pdList) {
             usedCapacity = usedCapacity + pd.getHours_needed();
         }
         
-        double utilization = usedCapacity * 100 / Integer.parseInt(totalCapacity);
+        Double utilization = usedCapacity * 100 / Integer.parseInt(totalCapacity);
         
         if (utilization > 90) {
             response.setContentType("application/xml");
@@ -225,7 +286,7 @@ public class ProductionPlanServlet extends HttpServlet {
             for (PlannedDemand pd: pdList) {
                 if (pd.getProduct().getProduct_id() == Long.parseLong(product_id)) {
                     pd.setBoxes_to_produce(pd.getBoxes_to_produce() + Integer.parseInt(quantity));
-                    pd.setHours_needed((double)pd.getBoxes_to_produce() / pd.getProduct().getProduction_capacity());
+                    pd.setHours_needed(Double.parseDouble(new java.text.DecimalFormat("0.00").format(pd.getBoxes_to_produce() / pd.getProduct().getProduction_capacity())));
                     exist = true;
                     break;
                 }
@@ -241,8 +302,8 @@ public class ProductionPlanServlet extends HttpServlet {
                 Double hoursNeeded = Double.parseDouble(quantity) / p1.getProduction_capacity();
                 PlannedDemand pd = new PlannedDemand();
                 pd.setProduct(p1);
-                pd.setBoxes_to_produce(Integer.parseInt(quantity));
-                pd.setHours_needed(hoursNeeded);
+                pd.setBoxes_to_produce(Double.parseDouble(quantity));
+                pd.setHours_needed(Double.parseDouble(new java.text.DecimalFormat("0.00").format(hoursNeeded)));
 
                 pdList.add(pd);
             }
@@ -304,14 +365,14 @@ public class ProductionPlanServlet extends HttpServlet {
         mo.setWorking_days(Integer.parseInt(workingDays));
         mo.setCapacity(Double.parseDouble(capacity));
         mo.setUtilization(Double.parseDouble(utilization));
-        mo.setOt_capacity(0.00);
+        mo.setOt_capacity(Integer.parseInt(workingDays) * 4.0 * plFacade.count());
         mo.setOt_utilization(0.00);
         mo.setPlannedDemand(new ArrayList());
         mo.setWeeklyOverviews(new ArrayList());
         
         mo = moFacade.createMO(mo, pdList);
-        mo = woFacade.createWO(mo, pdList);
-        doFacade.createDO(mo, pdList);
+        mo = woFacade.createWO(mo);
+        doFacade.createDO(mo);
         
         content = "Created Planned Demand on " + new java.text.DateFormatSymbols().getMonths()[Integer.parseInt(month)-1] + ", " + year + " Successfully.";
         
@@ -329,8 +390,11 @@ public class ProductionPlanServlet extends HttpServlet {
         
         ArrayList<PlannedDemand> pdList = new ArrayList<PlannedDemand>();
         for (PlannedDemand pd: mo.getPlannedDemand()) {
+            pd.setPlanned_dmd_id(null);
             pdList.add(pd);
         }
+        
+        mo.setMonth(new java.text.DateFormatSymbols().getMonths()[Integer.parseInt(mo.getMonth())-1]);
         
         HttpSession session = request.getSession();
         session.setAttribute(listName, pdList);
@@ -340,6 +404,183 @@ public class ProductionPlanServlet extends HttpServlet {
         
         String json = gson.toJson(mo);
         out.println(json);
+    }
+    
+    private void getDODetails(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String do_id = request.getParameter("do_id");
+        String listName = request.getParameter("listName");
+
+        DailyOverview d = doFacade.find(Long.parseLong(do_id));
+        
+        ArrayList<PlannedDemand> pdList = new ArrayList<PlannedDemand>();
+        for (PlannedDemand pd: d.getPlannedDemand()) {
+            pd.setPlanned_dmd_id(null);
+            pdList.add(pd);
+        }
+        
+        HttpSession session = request.getSession();
+        session.setAttribute(listName, pdList);
+        
+        d.setPlannedDemand(null);
+        d.setDailyActivity(null);
+        d.getWeeklyOverview().setDailyOverviews(null);
+        d.getWeeklyOverview().setPlannedDemand(null);
+        d.getWeeklyOverview().getMonthlyOverview().setWeeklyOverviews(null);
+        d.getWeeklyOverview().getMonthlyOverview().setPlannedDemand(null);
+        
+        String json = gson.toJson(d);
+        out.println(json);
+    }
+    
+    private void updateMPP(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String content = "";
+        String json = "";
+        
+        String mo_id = request.getParameter("mo_id");
+        String listName = request.getParameter("listName");
+        
+        HttpSession session = request.getSession();
+        ArrayList<PlannedDemand> pdList = (ArrayList<PlannedDemand>) session.getAttribute(listName);
+        
+        ArrayList<PlannedDemand> addPDList = new ArrayList<PlannedDemand>();
+        ArrayList<PlannedDemand> subPDList = new ArrayList<PlannedDemand>();
+        ArrayList<PlannedDemand> newPDList = new ArrayList<PlannedDemand>();
+        ArrayList<PlannedDemand> delPDList = new ArrayList<PlannedDemand>();
+        
+        MonthlyOverview m = moFacade.find(Long.parseLong(mo_id));
+        
+        for (PlannedDemand originalPD : m.getPlannedDemand()) {
+            boolean exist = false;
+            for (PlannedDemand updatedPD : pdList) {
+                if (originalPD.getProduct().getProduct_id() == updatedPD.getProduct().getProduct_id()) {
+                    exist = true;
+                    if (originalPD.getBoxes_to_produce() < updatedPD.getBoxes_to_produce()) {
+                        updatedPD.setBoxes_to_produce(updatedPD.getBoxes_to_produce() - originalPD.getBoxes_to_produce());
+                        addPDList.add(updatedPD);
+                    } else if (originalPD.getBoxes_to_produce() > updatedPD.getBoxes_to_produce()) {
+                        updatedPD.setBoxes_to_produce(originalPD.getBoxes_to_produce() - updatedPD.getBoxes_to_produce());
+                        subPDList.add(updatedPD);
+                    }
+                }
+            }
+            
+            if (exist == false) {
+                delPDList.add(originalPD);
+            }
+        }
+        
+        for (PlannedDemand updatedPD : pdList) {
+            boolean exist = false;
+            for (PlannedDemand originalPD : m.getPlannedDemand()) {
+                if (originalPD.getProduct().getProduct_id() == updatedPD.getProduct().getProduct_id()) {
+                    exist = true;
+                }
+            }
+            
+            if (exist == false) {
+                newPDList.add(updatedPD);
+            }
+        }
+        
+        moFacade.updateMO(m, addPDList, subPDList, newPDList, delPDList);
+        for (WeeklyOverview w : m.getWeeklyOverviews()) {
+            woFacade.updateWOByMonth(w, addPDList, subPDList, newPDList, delPDList);
+            for (DailyOverview d : w.getDailyOverviews()) {
+                doFacade.updateDOByMonth(d, addPDList, subPDList, newPDList, delPDList);
+            }
+        }
+        
+        content = "Update Monthly Production Plan " + mo_id + " Successfully.";
+        json = gson.toJson(new JsonReturnMsg("Update Monthly Production Plan", content, "info"));
+        out.println(json);
+    }
+    
+    private void updateDPP(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String content = "";
+        String json = "";
+        
+        String do_id = request.getParameter("do_id");
+        String listName = request.getParameter("listName");
+        
+        HttpSession session = request.getSession();
+        ArrayList<PlannedDemand> pdList = (ArrayList<PlannedDemand>) session.getAttribute(listName);
+        
+        ArrayList<PlannedDemand> addPDList = new ArrayList<PlannedDemand>();
+        ArrayList<PlannedDemand> subPDList = new ArrayList<PlannedDemand>();
+        ArrayList<PlannedDemand> newPDList = new ArrayList<PlannedDemand>();
+        ArrayList<PlannedDemand> delPDList = new ArrayList<PlannedDemand>();
+        
+        DailyOverview d = doFacade.find(Long.parseLong(do_id));
+        
+        for (PlannedDemand originalPD : d.getPlannedDemand()) {
+            boolean exist = false;
+            for (PlannedDemand updatedPD : pdList) {
+                if (originalPD.getProduct().getProduct_id() == updatedPD.getProduct().getProduct_id()) {
+                    exist = true;
+                    if (originalPD.getBoxes_to_produce() < updatedPD.getBoxes_to_produce()) {
+                        updatedPD.setBoxes_to_produce(updatedPD.getBoxes_to_produce() - originalPD.getBoxes_to_produce());
+                        addPDList.add(updatedPD);
+                    } else if (originalPD.getBoxes_to_produce() > updatedPD.getBoxes_to_produce()) {
+                        updatedPD.setBoxes_to_produce(originalPD.getBoxes_to_produce() - updatedPD.getBoxes_to_produce());
+                        subPDList.add(updatedPD);
+                    }
+                }
+            }
+            
+            if (exist == false) {
+                delPDList.add(originalPD);
+            }
+        }
+        
+        for (PlannedDemand updatedPD : pdList) {
+            boolean exist = false;
+            for (PlannedDemand originalPD : d.getPlannedDemand()) {
+                if (originalPD.getProduct().getProduct_id() == updatedPD.getProduct().getProduct_id()) {
+                    exist = true;
+                }
+            }
+            
+            if (exist == false) {
+                newPDList.add(updatedPD);
+            }
+        }
+        
+        doFacade.updateDOByDay(d, addPDList, subPDList, newPDList, delPDList);
+        woFacade.updateWOByDay(d.getWeeklyOverview(), addPDList, subPDList, newPDList, delPDList);
+        moFacade.updateMO(d.getWeeklyOverview().getMonthlyOverview(), addPDList, subPDList, newPDList, delPDList);
+        
+        content = "Update Daily Production Plan " + do_id + " Successfully.";
+        json = gson.toJson(new JsonReturnMsg("Update Daily Production Plan", content, "info"));
+        out.println(json);
+    }
+    
+    private void checkMonthAndYear(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+            throws Exception {
+        String mo_id = request.getParameter("mo_id");
+        MonthlyOverview m = moFacade.find(Long.parseLong(mo_id));
+        
+        response.setContentType("application/xml");
+        response.setCharacterEncoding("UTF-8");
+        
+        Calendar now = Calendar.getInstance();
+        
+        if (m.getYear() > now.get(Calendar.YEAR)) {
+            response.getWriter().write("<result>pass</result>");
+            
+        } else if (m.getYear() < now.get(Calendar.YEAR)) {
+            response.getWriter().write("<result>fail</result>");
+            
+        } else {
+            if ((Integer.parseInt(m.getMonth()) - 1) <= now.get(Calendar.MONTH)) {
+                response.getWriter().write("<result>fail</result>");
+                
+            } else {
+                response.getWriter().write("<result>pass</result>");
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

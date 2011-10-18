@@ -52,6 +52,7 @@
                         $('#remarks').val(data.remarks);  
                         $('#country').val(data.country);
                         $('#city').val(data.city);
+                        $('#cust_type').combobox('select',data.cust_type.replace('_',' '));
                     }
                 });
             } 
@@ -114,6 +115,9 @@
                     if (r){
                         $('#'+formId).each(function(){
                             $('#inquirer_id_tx').html('');
+                            $('#emp_id_tx').html('');
+                            $('#emp_name_tx').html('');
+                            $('#cust_type').combobox('select',0);
                             this.reset();
                         });
                     }
@@ -123,6 +127,25 @@
             function onClickConfirm(){
                 $('#createCust').panel('expand');
             }
+            
+            function searchSalesExName(){
+                var emp_name=$('#salesEx_name').val();
+                var f_url='../EmployeeServlet?action=loadPage&content=dialog&emp_name='+emp_name+'';
+                $('#tt2').datagrid({  
+                    url:f_url });   
+                $('#tt2').datagrid('load');
+            }
+            
+            function resetSalesEx(){
+                $('#salesEx_name').val("");
+                searchSalesExName();
+            }
+            
+            function resetSalesLead(){
+                $('#company_name_search').val("");
+                filterCompName();
+            }
+            
         </script>    
     </head>
     <body>
@@ -217,7 +240,7 @@
             <br/>
             <div class="form_buttons">
                 <input type="submit" onclick="onClickConfirm();" value="Create"/>
-                <input type="button" onclick="custReset('ff','Clear the form?')" value="Clear" />
+                <input type="button" onclick="custReset('ff','Do you want to clear the form?')" value="Clear" />
             </div>
         </form>
         <div id="tb" style="padding:5px;height:auto">  
@@ -226,7 +249,11 @@
                     <tr>
                         <td>Company Name:</td>
                         <td><input  name="company_name_search" id="company_name_search" type="text"/></td>
-                        <td><a href="#" class="easyui-linkbutton" onclick="filterCompName();" iconCls="icon-search">Search</a></td>
+                        <td>
+                            <a href="#" class="easyui-linkbutton" onclick="filterCompName();" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="resetSalesLead()">Clear</a>
+
+                        </td>
                     </tr>
                 </table>   
             </div>  
@@ -236,13 +263,14 @@
                    url="../SalesLeadServlet?action=loadPage&content=dialog"   
                    toolbar="#tb"  
                    singleSelect="true" fitColumns="true"
-                   rownumbers="true">  
+                   rownumbers="false"
+                   pagination="true">  
                 <thead>  
                     <tr> 
-                        <th field="inquirer_id" width="10%">ID</th>  
-                        <th field="company_name" width="40%">Company Name</th>
-                        <th field="country" width="25%">Country</th>
-                        <th field="city" width="25%">City</th>
+                        <th field="inquirer_id" width="10%" sortable="true">ID</th>  
+                        <th field="company_name" width="40%" sortable="true">Company Name</th>
+                        <th field="country" width="25%" sortable="true">Country</th>
+                        <th field="city" width="25%" sortable="true">City</th>
                     </tr>  
                 </thead>  
             </table> 
@@ -252,8 +280,10 @@
                 <table cellpadding="5">
                     <tr>
                         <td>Sales Executive Name:</td>
-                        <td><input style="width:100px" type="text"/></td>
-                        <td><a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a></td>
+                        <td><input style="width:100px" ame="salesEx_name" id="salesEx_name" type="text"/></td>
+                        <td> <a href="#" class="easyui-linkbutton" onclick="searchSalesExName()" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="resetSalesEx()">Clear</a>
+                        </td>
                     </tr>
                 </table>  
             </div>  
@@ -263,11 +293,12 @@
                    url="../EmployeeServlet?action=loadPage&content=dialog"   
                    toolbar="#tb2"  
                    singleSelect="true" fitColumns="true"
-                   rownumbers="true">  
+                   rownumbers="false"
+                   pagination="true">  
                 <thead>  
                     <tr> 
-                        <th field="emp_id" width="30%">Sales Executive ID</th>  
-                        <th field="emp_name" width="70%">Sales Executive Name</th>
+                        <th field="emp_id" width="30%" sortable="true">Sales Executive ID</th>  
+                        <th field="emp_name" width="70%" sortable="true">Sales Executive Name</th>
                     </tr>  
                 </thead>  
             </table> 

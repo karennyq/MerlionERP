@@ -609,7 +609,7 @@ public class SalesQuotationServlet extends HttpServlet {
             c.setEmployee(null);
             c.setPurchaseOrders(null);
             c.setPreSaleDocuments(null);
-            c.setSoleDistribution(null);
+            c.setOperatingRegions(null);
             sq.setInquirer((SalesLead) c);
         }
         

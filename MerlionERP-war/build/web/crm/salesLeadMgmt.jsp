@@ -40,6 +40,13 @@
                 var f_url='../SalesLeadServlet?action=loadPage&content=table&inquirer_id='+salesLeadID+'&company_name='+compName;
                 $('#tt').datagrid({url:f_url});     
             }
+            
+            function reset(){
+                $('#inquirer_id').val("");
+                $('#company_name').val("");
+                filterTable();
+            }
+            
         </script>
     </head>
     <body>
@@ -56,7 +63,10 @@
                         <td><input name="inquirer_id" id="inquirer_id" type="text"/></td>
                         <td>Company Name:</td>
                         <td><input name="company_name" id="company_name" type="text"/></td>
-                        <td><a href="#" class="easyui-linkbutton" iconCls="icon-search" onClick="filterTable()"></a></td>
+                        <td>
+                            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onClick="filterTable()"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+                        </td>
                     </tr>
                 </table>  
             </div>  
@@ -69,10 +79,10 @@
                    rownumbers="false">  
                 <thead>  
                     <tr> 
-                        <th field="inquirer_id" width="5%">ID</th>  
-                        <th field="company_name" width="25%">Company Name</th>
-                        <th field="convert_status" width="20%">Conversion</th>
-                        <th field="create_date_time" width="20%">Date & Time Created</th> 
+                        <th field="inquirer_id" width="3%" sortable="true">ID</th>  
+                        <th field="company_name" width="25%" sortable="true">Company Name</th>
+                        <th field="convert_status" width="20%" sortable="true">Conversion</th>
+                        <th field="create_date_time" width="22%" sortable="true">Date & Time Created</th> 
                         <th field="actionConvert" width="20%" formatter="formatActionConvert"></th>
                         <th field="actionUpdate" width="10%" formatter="formatActionUpdate"></th>
                     </tr>  

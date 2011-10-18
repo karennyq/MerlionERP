@@ -128,10 +128,10 @@
                         $('#fax_no').html(data.fax_no);
                         $('#email').html(data.email);
                         
+                        var cust_type = data.cust_type.replace("_"," ");
                         if(data.convert_status == "<%=SalesLead.ConvertStatus.Not_Converted.name()%>"){
-                            $('#cust_type').html("Sales Lead");
+                            $('#cust_type').html("Sales Lead ("+cust_type+")");
                         }else{     
-                            var cust_type = data.cust_type.replace("_"," ");
                             $('#cust_type').html("Customer ("+cust_type+")");
                         }
                     }
@@ -179,7 +179,7 @@
                             success: function(data){                       
                                 $('#product_id').val("");
                                 $('#pdt_qty').val("");
-                                $('add_discount').val("");
+                                $('#add_discount').val("0.00");
                                 $('#pdttt').datagrid('reload');   
                             }
                         });
@@ -260,7 +260,7 @@
             }
             
             function formatBulkDiscount(value,row,rowIndex){
-                if((row.bulk_discount=="Sub Total:")||(row.bulk_discount=="Add. Discount:")||(row.bulk_discount=="Net Total:")||(row.bulk_discount=="Lead Time:")){
+                if((row.bulk_discount=="Sub Total:")||(row.bulk_discount=="Customer Discount:")||(row.bulk_discount=="Add. Discount:")||(row.bulk_discount=="Net Total:")||(row.bulk_discount=="Lead Time:")){
                     return value;
                 }else{
                     try{

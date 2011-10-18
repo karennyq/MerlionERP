@@ -15,7 +15,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.persistence.Customer;
 import org.persistence.SalesLead;
 import util.ConvertToJsonObject;
 import util.JsonReturnDropDown;
@@ -73,19 +72,19 @@ public class SalesLeadServlet extends HttpServlet {
             throws Exception {
         String content = request.getParameter("content");
         if (content.equals("table")) {
-            
+
             //paging
-            int page= (request.getParameter("page")!=null)?Integer.parseInt(request.getParameter("page")):1;
-            int rows= (request.getParameter("rows")!=null)?Integer.parseInt(request.getParameter("rows")):10;
-            String sort=(request.getParameter("sort")!=null)?request.getParameter("sort"):"inquirer_id";
-            String order=(request.getParameter("order")!=null)?request.getParameter("order"):"asc";
-            
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "inquirer_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
             //filter
-            String salesLeadID = (request.getParameter("inquirer_id")!=null)?request.getParameter("inquirer_id"):"";
-            String compName = (request.getParameter("company_name")!=null)?request.getParameter("company_name"):"";
-            
-            ArrayList<SalesLead> saleLeadList = new ArrayList<SalesLead>(salesLeadFacade.findFilteredSalesLead(page,rows,sort,order,salesLeadID,compName));
-            
+            String salesLeadID = (request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : "";
+            String compName = (request.getParameter("company_name") != null) ? request.getParameter("company_name") : "";
+
+            ArrayList<SalesLead> saleLeadList = new ArrayList<SalesLead>(salesLeadFacade.findFilteredSalesLead(page, rows, sort, order, salesLeadID, compName));
+
             //gson = new Gson();
             for (SalesLead sl : saleLeadList) {
                 sl = (SalesLead) ConvertToJsonObject.convert(sl);
@@ -100,7 +99,7 @@ public class SalesLeadServlet extends HttpServlet {
 //                }
             }
 
-            int totalReord = salesLeadFacade.countFilteredSalesLead(page,rows,sort,order,salesLeadID,compName);
+            int totalReord = salesLeadFacade.countFilteredSalesLead(page, rows, sort, order, salesLeadID, compName);
             String json = gson.toJson(new JsonReturnTable(totalReord + "", saleLeadList));
             System.out.println(json);
             out.println(json);
@@ -124,24 +123,21 @@ public class SalesLeadServlet extends HttpServlet {
             String json = gson.toJson(sl);
             out.println(json);
         } else if (content.equals("dialog")) {
-            
+
+            //paging
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "inquirer_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
             //filter
-            String compName = (request.getParameter("company_name")!=null)?request.getParameter("company_name"):"";
-           System.out.println("Company Name: " +request.getParameter("company_name"));
-            ArrayList<SalesLead> saleLeadList = new ArrayList<SalesLead>(salesLeadFacade.findNotConvertedSalesLead(compName));
-            int totalReord = salesLeadFacade.countNotConvertedSalesLead(compName);
+            String compName = (request.getParameter("company_name") != null) ? request.getParameter("company_name") : "";
+            System.out.println("Company Name: " + request.getParameter("company_name"));
+            ArrayList<SalesLead> saleLeadList = new ArrayList<SalesLead>(salesLeadFacade.findNotConvertedSalesLead(page, rows, sort, order, compName));
+            int totalReord = salesLeadFacade.countNotConvertedSalesLead(page, rows, sort, order, compName);
 
             for (SalesLead sl : saleLeadList) {
                 sl = (SalesLead) ConvertToJsonObject.convert(sl);
-//                for (SalesInquiry si : s.getPreSaleDocuments()) {
-//                    si.setInquirer(null);
-//                    si.setLineItems(null);
-//                }
-//
-//                if (s instanceof Customer) {
-//                    Customer c = (Customer) s;
-//                    c.getAccount().setCustomer(null);
-//                }
 
             }
 
@@ -187,36 +183,36 @@ public class SalesLeadServlet extends HttpServlet {
 
             String json = gson.toJson(sl);
             out.println(json);
-        } 
+        }
         /*else if (content.equals("getCustType")) {
-            Customer.CustomerType[] custTypeList = Customer.CustomerType.values();
-
-            response.setContentType("application/xml");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("<custTypeList>");
-            int counter = 0;
-
-            for (Customer.CustomerType ctl : custTypeList) {
-                System.out.println(ctl.ordinal());
-                response.getWriter().write("<custType>");
-                response.getWriter().write("<custType_id>" + ctl.ordinal() + "</custType_id>");
-                response.getWriter().write("<custType_name>Customer (" + ctl.name().replace('_', ' ') + ")</custType_name>");
-                response.getWriter().write("</custType>");
-                counter++;
-            }
-            response.getWriter().write("<custType>");
-            response.getWriter().write("<custType_id>" + counter + "</custType_id>");
-            response.getWriter().write("<custType_name>Sales Lead</custType_name>");
-            response.getWriter().write("</custType>");
-            
-            response.getWriter().write("</custTypeList>");
+        Customer.CustomerType[] custTypeList = Customer.CustomerType.values();
+        
+        response.setContentType("application/xml");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("<custTypeList>");
+        int counter = 0;
+        
+        for (Customer.CustomerType ctl : custTypeList) {
+        System.out.println(ctl.ordinal());
+        response.getWriter().write("<custType>");
+        response.getWriter().write("<custType_id>" + ctl.ordinal() + "</custType_id>");
+        response.getWriter().write("<custType_name>Customer (" + ctl.name().replace('_', ' ') + ")</custType_name>");
+        response.getWriter().write("</custType>");
+        counter++;
+        }
+        response.getWriter().write("<custType>");
+        response.getWriter().write("<custType_id>" + counter + "</custType_id>");
+        response.getWriter().write("<custType_name>Sales Lead</custType_name>");
+        response.getWriter().write("</custType>");
+        
+        response.getWriter().write("</custTypeList>");
         }*/
 
     }
 
     private void createSalesLead(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
             throws Exception {
-        
+
         String company_name = request.getParameter("company_name");
         String contact_person = request.getParameter("contact_person");
         String contact_no = request.getParameter("contact_no");
@@ -226,15 +222,17 @@ public class SalesLeadServlet extends HttpServlet {
         String fax_no = request.getParameter("fax_no");
         String country = request.getParameter("country");
         String city = request.getParameter("city");
-        
+        String cust_type = request.getParameter("cust_type");
+
+        cust_type = cust_type.replace(" ", "_");
+
         //check for company's name existence
-        if (salesLeadFacade.salesLeadCompNameExist(company_name)){
+        if (salesLeadFacade.salesLeadCompNameExist(company_name)) {
             String content = "Company name already exist.";
             String json = gson.toJson(new JsonReturnMsg("Create Sales Lead", content, "error"));
             out.println(json);
-        }
-        else {
-            salesLeadFacade.createSalesLead(company_name, contact_person, contact_no, email, remarks, company_add, fax_no, country, city);
+        } else {
+            salesLeadFacade.createSalesLead(company_name, contact_person, contact_no, email, remarks, company_add, fax_no, country, city, cust_type);
             // gson = new Gson();
             String content = "Create Sales Lead Successful.";
             String json = gson.toJson(new JsonReturnMsg("Create Sales Lead", content, "info"));
@@ -256,18 +254,20 @@ public class SalesLeadServlet extends HttpServlet {
         String country = request.getParameter("country");
         String city = request.getParameter("city");
         String sales_lead_status = request.getParameter("sales_lead_status");
-        
-        if (salesLeadFacade.verifyCompName(inquirer_id,company_name)){ //inqurier ID matches
+        String cust_type = request.getParameter("cust_type");
+        cust_type = cust_type.replace(" ", "_");
 
-            salesLeadFacade.updateSalesLead(inquirer_id, company_name, contact_person, contact_no, email, remarks, company_add, fax_no, country, city, sales_lead_status);
+
+        if (salesLeadFacade.verifyCompName(inquirer_id, company_name)) { //inqurier ID matches
+
+            salesLeadFacade.updateSalesLead(inquirer_id, company_name, contact_person, contact_no, email, remarks, company_add, fax_no, country, city, sales_lead_status, cust_type);
 
             // gson = new Gson();
             String content = "Update Sales Lead Successful.";
             String json = gson.toJson(new JsonReturnMsg("Update Sales Lead", content, "info"));
             out.println(json);
-        }
-        else { //inqurier ID dont match
-           
+        } else { //inqurier ID dont match
+
             String content = "Company name already exist.";
             String json = gson.toJson(new JsonReturnMsg("Update Sales Lead", content, "error"));
             out.println(json);

@@ -132,7 +132,7 @@
                         <td><input name="approved_status" id="approved_status" panelHeight="auto" class="easyui-combobox"/></td>
                         <td>
                             <a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a>  
-                            <a href="#" class="easyui-linkbutton" onclick="reset()">Reset</a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
                         </td>
                     </tr>
                 </table>

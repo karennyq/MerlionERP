@@ -52,6 +52,8 @@
                         $('#remarks').val(data.remarks);  
                         $('#country').val(data.country);
                         $('#city').val(data.city);
+                        $('#cust_type').combobox('select',data.cust_type.replace('_',' '))
+
                     }
                 });
             } 
@@ -87,11 +89,16 @@
             });
             
             function searchSalesExName(){
-                var emp_name=$('#emp_name').val();
-                var emp_id=$('#emp_id').val();
-                var f_url='../AccountServlet?action=loadPage&content=table&emp_id='+emp_id+'&emp_name='+emp_name;
+                var emp_name=$('#salesEx_name').val();
+                var f_url='../EmployeeServlet?action=loadPage&content=dialog&emp_name='+emp_name+'';
                 $('#tt').datagrid({  
-                    url:f_url });     
+                    url:f_url });   
+                $('#tt').datagrid('load');
+            }
+            
+            function reset(){
+                $('#salesEx_name').val("");
+                searchSalesExName();
             }
             
             function openDd(){
@@ -105,6 +112,9 @@
                         $('#'+formId).each(function(){
                             getSalesLeadInfo();
                         });
+                        $('#emp_id_tx').html("");
+                        $('#emp_name_tx').html("");
+                        
                     }
                 });
             }
@@ -201,7 +211,7 @@
             <br/>
             <div class="form_buttons">
                 <input id="btc" name="btc" type="submit" onclick="onClickConfirm();" value="Convert"/>
-                <input id="btr" name="btr" type="button" onclick="salesReset('ff','Reset the form?')" value="Reset" />
+                <input id="btr" name="btr" type="button" onclick="salesReset('ff','Do you want to reset the form?')" value="Reset" />
             </div> 
         </form>
         <div id="tb" style="padding:5px;height:auto">  
@@ -209,8 +219,11 @@
                 <table cellpadding="5">
                     <tr>
                         <td>Sales Executive Name:</td>
-                        <td><input type="text"/></td>
-                        <td><a href="#" class="easyui-linkbutton" onlick="searchSalesExName()" iconCls="icon-search">Search</a></td>
+                        <td><input name="salesEx_name" id="salesEx_name" type="text"/></td>
+                        <td>
+                            <a href="#" class="easyui-linkbutton" onclick="searchSalesExName()" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+                        </td>
                     </tr>
                 </table>
             </div>  
@@ -220,11 +233,12 @@
                    url="../EmployeeServlet?action=loadPage&content=dialog"   
                    toolbar="#tb"  
                    singleSelect="true" fitColumns="true"
-                   rownumbers="true">  
+                   rownumbers="false"
+                   pagination="true">  
                 <thead>  
                     <tr> 
-                        <th field="emp_id" width="30%">Sales Executive ID</th>  
-                        <th field="emp_name" width="70%">Sales Executive Name</th>
+                        <th field="emp_id" width="30%" sortable="true">Sales Executive ID</th>  
+                        <th field="emp_name" width="70%" sortable="true">Sales Executive Name</th>
                     </tr>  
                 </thead>  
             </table> 

@@ -307,6 +307,9 @@
                         }
                     });
                 }
+                $('#hideTbody').hide();
+                $('#addRegion').panel('close');
+                $('#form_buttons').hide();
             }
             
             $(function(){
@@ -333,6 +336,20 @@
                 $('#updateSD').panel('expand');
                 $('#addRoles').panel('expand');
             }
+            
+            function searchWholesaler(){
+                var wholesaler_company=$('#wholesaler_company').val();
+                var f_url='../SoleDistributionServlet?action=loadPage&content=dialog&wholesaler_company='+wholesaler_company+'';
+                $('#tt').datagrid({  
+                    url:f_url });   
+                $('#tt').datagrid('load');
+            }
+            
+            function reset(){
+                $('#wholesaler_company').val("");
+                searchWholesaler();
+            }
+            
         </script>    
     </head>
     <body>
@@ -433,16 +450,19 @@
             <br/>
             <div class="form_buttons" id="form_buttons">
                 <input type="submit" onclick="onClickConfirm();" value="Create"/>
-                <input type="button" onclick="custReset('ff','Clear the form?')" value="Clear" />
+                <input type="button" onclick="custReset('ff','Do you want to clear the form?')" value="Clear" />
             </div> 
         </form>
         <div id="tb" style="padding:5px;height:auto">  
             <div>
                 <table cellpadding="5">
                     <tr>
-                        <td>Customer ID:</td>
-                        <td><input type="text"/></td>
-                        <td><a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a></td>
+                        <td>Company Name:</td>
+                        <td><input name="wholesaler_company" id="wholesaler_company" type="text"/></td>
+                        <td>
+                            <a href="#" class="easyui-linkbutton" onclick="searchWholesaler()" iconCls="icon-search"></a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
+                        </td>
                     </tr>
                 </table>  
             </div>  
@@ -453,13 +473,14 @@
                    toolbar="#tb"  
                    singleSelect="true"
                    fitColumns="true"
-                   rownumbers="true">  
+                   rownumbers="false"
+                   pagination="true">  
                 <thead>  
                     <tr> 
-                        <th field="inquirer_id" width="10%">ID</th>  
-                        <th field="company_name" width="40%">Company Name</th>
-                        <th field="country" width="25%">Country</th>
-                        <th field="city" width="25%">City</th>
+                        <th field="inquirer_id" width="10%" sortable="true">ID</th>  
+                        <th field="company_name" width="40%" sortable="true">Company Name</th>
+                        <th field="country" width="25%" sortable="true">Country</th>
+                        <th field="city" width="25%" sortable="true">City</th>
                     </tr>  
                 </thead>  
             </table> 

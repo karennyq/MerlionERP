@@ -6,7 +6,7 @@ package servlet.crm.soleDistribution;
 
 import com.google.gson.Gson;
 import ejb.sessionbeans.interfaces.CustomerFacadeLocal;
-import ejb.sessionbeans.interfaces.SoleDistributionFacadeLocal;
+import ejb.sessionbeans.interfaces.OperatingRegionFacadeLocal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -19,8 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.persistence.Customer;
-import org.persistence.LineItem;
-import org.persistence.SoleDistribution;
+import org.persistence.OperatingRegion;
 import util.ConvertToJsonObject;
 import util.JsonReturnDropDown;
 import util.JsonReturnMsg;
@@ -43,7 +42,7 @@ public class SoleDistributionServlet extends HttpServlet {
     @EJB
     CustomerFacadeLocal customerFacade;
     @EJB
-    SoleDistributionFacadeLocal soleDistributionFacade;
+    OperatingRegionFacadeLocal soleDistributionFacade;
     Gson gson = new Gson();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -84,21 +83,21 @@ public class SoleDistributionServlet extends HttpServlet {
             throws Exception {
         String content = request.getParameter("content");
         if (content.equals("table")) {
-            
+
             //paging
-            int page= (request.getParameter("page")!=null)?Integer.parseInt(request.getParameter("page")):1;
-            int rows= (request.getParameter("rows")!=null)?Integer.parseInt(request.getParameter("rows")):10;
-            String sort=(request.getParameter("sort")!=null)?request.getParameter("sort"):"inquirer_id";
-            String order=(request.getParameter("order")!=null)?request.getParameter("order"):"asc";
-            
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "inquirer_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
             //filter
-            String f_id= (request.getParameter("f_id")!=null)?request.getParameter("f_id"):"";
-            String f_name= (request.getParameter("f_name")!=null)?request.getParameter("f_name"):"";
-            String f_region= (request.getParameter("f_region")!=null)?request.getParameter("f_region"):"";
-            
-            
-            
-            ArrayList<Customer> customerList = new ArrayList(soleDistributionFacade.findFilteredSoleDistributors(rows,page,f_id,f_name,f_region,sort,order));
+            String f_id = (request.getParameter("f_id") != null) ? request.getParameter("f_id") : "";
+            String f_name = (request.getParameter("f_name") != null) ? request.getParameter("f_name") : "";
+            String f_region = (request.getParameter("f_region") != null) ? request.getParameter("f_region") : "";
+
+
+
+            ArrayList<Customer> customerList = new ArrayList(soleDistributionFacade.findFilteredSoleDistributors(rows, page, f_id, f_name, f_region, sort, order));
 
             for (Customer c : customerList) {
                 c = (Customer) ConvertToJsonObject.convert(c);
@@ -106,7 +105,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
 
             System.out.println(customerList.size());
-            int totalRecord = soleDistributionFacade.countFilteredSoleDistributors(f_id,f_name,f_region);
+            int totalRecord = soleDistributionFacade.countFilteredSoleDistributors(f_id, f_name, f_region);
             String json = gson.toJson(new JsonReturnTable(totalRecord + "", customerList));
             out.println(json);
         } else if (content.equals("details")) {
@@ -118,7 +117,17 @@ public class SoleDistributionServlet extends HttpServlet {
             String json = gson.toJson(cl);
             out.println(json);
         } else if (content.equals("dialog")) {
-            ArrayList<Customer> customerList = new ArrayList(soleDistributionFacade.findFilteredWholesalers());
+
+            //paging
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "inquirer_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
+            String wholesaler_company = (request.getParameter("wholesaler_company") != null) ? request.getParameter("wholesaler_company") : "";
+
+
+            ArrayList<Customer> customerList = new ArrayList(soleDistributionFacade.findFilteredWholesalers(page, rows, sort, order, wholesaler_company));
 
             for (Customer c : customerList) {
                 c = (Customer) ConvertToJsonObject.convert(c);
@@ -126,7 +135,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
 
             System.out.println(customerList.size());
-            int totalRecord = soleDistributionFacade.countFilteredWholesalers();
+            int totalRecord = soleDistributionFacade.countFilteredWholesalers(page, rows, sort, order, wholesaler_company);
             String json = gson.toJson(new JsonReturnTable(totalRecord + "", customerList));
             out.println(json);
         } else if (content.equals("dropdown")) {
@@ -146,20 +155,20 @@ public class SoleDistributionServlet extends HttpServlet {
                 }
             }
 
-            ArrayList soleDisList = (ArrayList<SoleDistribution>) session.getAttribute("soleDistributionList");
+            ArrayList soleDisList = (ArrayList<OperatingRegion>) session.getAttribute("soleDistributionList");
             int totalRecord = (soleDisList != null) ? soleDisList.size() : 0;
             String json = gson.toJson(new JsonReturnTable(totalRecord + "", soleDisList));
             //System.out.println(json);
             out.println(json);
         } else if (content.equals("updateDistributorShipTable")) {
-            System.out.println(request.getParameter("inquirer_id")+"!!!!!");
+            System.out.println(request.getParameter("inquirer_id") + "!!!!!");
             long cId = Long.parseLong(request.getParameter("inquirer_id"));
-            ArrayList<SoleDistribution> soleDisList = new ArrayList<SoleDistribution>(soleDistributionFacade.findSoleDistributorsByInquier(cId));
+            ArrayList<OperatingRegion> soleDisList = new ArrayList<OperatingRegion>(soleDistributionFacade.findSoleDistributorsByInquier(cId));
             int totalRecord = (soleDisList != null) ? soleDisList.size() : 0;
             //System.out.println(totalRecord);
-            
-            for (SoleDistribution sd : soleDisList) {
-                sd = (SoleDistribution) ConvertToJsonObject.convert(sd);
+
+            for (OperatingRegion sd : soleDisList) {
+                sd = (OperatingRegion) ConvertToJsonObject.convert(sd);
             }
             String json = gson.toJson(new JsonReturnTable(totalRecord + "", soleDisList));
             //System.out.println(json);
@@ -171,8 +180,8 @@ public class SoleDistributionServlet extends HttpServlet {
     private void addUpdateDistribution(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws Exception {
         String region = request.getParameter("region");
         String exist = soleDistributionFacade.checkSoleDistributionExist(region);
-        
-        System.out.println("++++"+exist);
+
+        System.out.println("++++" + exist);
         long cId = Long.parseLong(request.getParameter("inquirer_id"));
 
 
@@ -199,7 +208,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
     private void addDistribution(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws Exception {
         HttpSession session = request.getSession();
-        ArrayList<SoleDistribution> soleDisList = new ArrayList<SoleDistribution>();
+        ArrayList<OperatingRegion> soleDisList = new ArrayList<OperatingRegion>();
         String region = request.getParameter("region");
         String json;
         if (region == null || region.isEmpty()) {
@@ -210,7 +219,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
 
             boolean sdExist = false;
-            for (SoleDistribution sd : soleDisList) {
+            for (OperatingRegion sd : soleDisList) {
                 if (sd.getRegion().equals(region)) {
                     sdExist = true;
                     json = gson.toJson(new JsonReturnMsg("Create Sole Distribution", "Region Already Added.", "error"));
@@ -235,7 +244,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
                         String exist = soleDistributionFacade.checkSoleDistributionExist(region);
                         if (exist.equals("")) {
-                            SoleDistribution sd = new SoleDistribution();
+                            OperatingRegion sd = new OperatingRegion();
                             sd.setRegion(region);
                             soleDisList.add(sd);
                             session.setAttribute("soleDistributionList", soleDisList);
@@ -257,7 +266,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
     private void removeDistribution(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws Exception {
         HttpSession session = request.getSession();
-        ArrayList<SoleDistribution> soleDisList = new ArrayList<SoleDistribution>();
+        ArrayList<OperatingRegion> soleDisList = new ArrayList<OperatingRegion>();
 
         int listIndex = Integer.parseInt(request.getParameter("listIndex"));
         soleDisList = (ArrayList) session.getAttribute("soleDistributionList");
@@ -270,7 +279,7 @@ public class SoleDistributionServlet extends HttpServlet {
 
     private void createSoleDistributor(HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws Exception {
         HttpSession session = request.getSession();
-        ArrayList<SoleDistribution> soleDisList = new ArrayList<SoleDistribution>();
+        ArrayList<OperatingRegion> soleDisList = new ArrayList<OperatingRegion>();
         //int listIndex = Integer.parseInt(request.getParameter("listIndex"));
         soleDisList = (ArrayList) session.getAttribute("soleDistributionList");
         String custId = (request.getParameter("inquirer_id") != null) ? request.getParameter("inquirer_id") : "";
@@ -280,7 +289,7 @@ public class SoleDistributionServlet extends HttpServlet {
         } else {
             Customer c = customerFacade.find(Long.parseLong(custId));
             String exist = "";
-            for (SoleDistribution sd : soleDisList) {
+            for (OperatingRegion sd : soleDisList) {
 
                 exist = soleDistributionFacade.checkSoleDistributionExist(sd.getRegion());
                 if (!exist.equals("")) {
@@ -291,7 +300,7 @@ public class SoleDistributionServlet extends HttpServlet {
             }
 
             if (exist.equals("")) {
-                for (SoleDistribution sd : soleDisList) {
+                for (OperatingRegion sd : soleDisList) {
                     soleDistributionFacade.addSoleDistribution(sd.getRegion(), c.getInquirer_id());
 //                    //check
 //                    soleDistributionFacade.create(sd);
@@ -332,11 +341,11 @@ public class SoleDistributionServlet extends HttpServlet {
 
     private String checkChildRegionExist(HttpServletRequest request, String region) {
         HttpSession session = request.getSession();
-        ArrayList<SoleDistribution> soleDisList = new ArrayList<SoleDistribution>();
+        ArrayList<OperatingRegion> soleDisList = new ArrayList<OperatingRegion>();
         soleDisList = (ArrayList) session.getAttribute("soleDistributionList");
         String ret = "";
 
-        for (SoleDistribution sd : soleDisList) {
+        for (OperatingRegion sd : soleDisList) {
             if (region.endsWith(sd.getRegion())) {
                 ret = sd.getRegion();
                 break;

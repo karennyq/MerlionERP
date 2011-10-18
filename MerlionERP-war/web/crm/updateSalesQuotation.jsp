@@ -110,10 +110,10 @@
                         $('#contact_no').html(data.inquirer.contact_no);
                         $('#email').html(data.inquirer.email);
                         $('#fax_no').html(data.inquirer.fax_no);
-                        if(data.inquirer.convert_status == "<%=SalesLead.ConvertStatus.Not_Converted.name()%>"){
-                            $('#cust_type').html("Sales Lead");
+                        var cust_type = data.inquirer.cust_type.replace("_"," ");
+                        if(data.convert_status == "<%=SalesLead.ConvertStatus.Not_Converted.name()%>"){
+                            $('#cust_type').html("Sales Lead ("+cust_type+")");
                         }else{     
-                            var cust_type = data.inquirer.cust_type.replace("_"," ");
                             $('#cust_type').html("Customer ("+cust_type+")");
                         }
                         $('#quotation_source').combobox('select', data.inquiry_source);

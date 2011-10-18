@@ -17,29 +17,25 @@ public class SalesQuotation extends SalesInquiry {
     private Date expiry_date;
     @Basic
     private Integer indicative_lead_time;
-   
     @Basic
     private Double discount;
-
-
+    @Basic
+    private Double custGrpDiscount;
     @OneToMany(mappedBy = "salesQuotation")
     private Collection<PurchaseOrder> purchaseOrders;
-    
-    
     @Transient
     private Double actual_total;
-    
     @Transient
     private Double discounted_total;
 
     public Double getActual_total() {
         setActual_total();
-        
+
         return actual_total;
     }
 
     public void setActual_total() {
-        ArrayList<LineItem> list = (this.getLineItems() == null) ? new ArrayList<LineItem>(): new ArrayList<LineItem>(this.getLineItems());
+        ArrayList<LineItem> list = (this.getLineItems() == null) ? new ArrayList<LineItem>() : new ArrayList<LineItem>(this.getLineItems());
         double total = 0.0;
         for (LineItem li : list) {
             total = total + li.getActual_price();
@@ -53,12 +49,16 @@ public class SalesQuotation extends SalesInquiry {
     }
 
     public void setDiscounted_total() {
+        double discTotal = getActual_total();
+        getCustGrpDiscount();
+        discTotal = discTotal * (1 - this.custGrpDiscount / 100);
 
-        double discTotal = this.getActual_total() * (1 - this.discount/100);
+        discTotal = discTotal * (1 - this.discount / 100);
+
         this.discounted_total = discTotal;
 
     }
-    
+
     public Double getDiscount() {
         return discount;
     }
@@ -83,7 +83,6 @@ public class SalesQuotation extends SalesInquiry {
         return indicative_lead_time;
     }
 
-
     public Collection<PurchaseOrder> getPurchaseOrders() {
         return purchaseOrders;
     }
@@ -92,6 +91,16 @@ public class SalesQuotation extends SalesInquiry {
         this.purchaseOrders = param;
     }
 
+    public Double getCustGrpDiscount() {
+        if(this.custGrpDiscount==null){
+            this.custGrpDiscount = 0.0;
+        }
+        return custGrpDiscount;
+    }
+
+    public void setCustGrpDiscount(Double custGrpDiscount) {
+        this.custGrpDiscount = custGrpDiscount;
+    }
     /*
      * public double getQuotationPrice() { double totalPrice=0; for(int
      * i=0;i<this.getLineItems().size();i++){ ArrayList<LineItem> al= new

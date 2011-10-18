@@ -286,27 +286,58 @@ public class EmployeeServlet extends HttpServlet {
             System.out.println(json);
             out.println(json);
         } else if (content.equals("dialog")) {
-            
-            ArrayList<Employee> empList = new ArrayList<Employee>(employeeFacade.salesExecutiveEmployees());
-            ArrayList<Employee> jList = new ArrayList<Employee>();
-            // int totalRecord = employeeFacade.countNotConvertedSalesLead();
-          
-           for (Employee e : empList) {
-                Employee je = new Employee();
-                je.setEmp_id(e.getEmp_id());
-                je.setEmp_name(e.getEmp_name());
-                
-                jList.add(je);
-            }
-             /* for (Employee e : empList) {
-//                c.getAccount().setCustomer(null);
-                 e= (Employee) ConvertToJsonObject.convert(e);
-             
-            }*/
-            String json = gson.toJson(new JsonReturnTable(jList.size() + "", jList));
-            out.println(json);
-        }
 
+            //paging
+            int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
+            int rows = (request.getParameter("rows") != null) ? Integer.parseInt(request.getParameter("rows")) : 10;
+            String sort = (request.getParameter("sort") != null) ? request.getParameter("sort") : "emp_id";
+            String order = (request.getParameter("order") != null) ? request.getParameter("order") : "asc";
+
+            //filter
+            String emp_name = (request.getParameter("emp_name") != null) ? request.getParameter("emp_name") : "";
+            
+            ArrayList<Employee> salesExList = new ArrayList<Employee>(employeeFacade.findFilteredSalesExEmployee(page, rows, sort, order, order, emp_name));
+
+            int totalReord = employeeFacade.countFilteredSalesExEmployee(page, rows, sort, order, emp_name);
+
+            ArrayList<Employee> jsonList = new ArrayList<Employee>();
+
+            for (Employee e : salesExList) {
+                Employee je = new Employee();
+                    je.setEmp_id(e.getEmp_id());
+                    je.setEmp_name(e.getEmp_name());
+                    je.setEmail(e.getEmail());
+                    jsonList.add(je);
+                
+            }
+
+            String json = gson.toJson(new JsonReturnTable(jsonList.size() + "", jsonList));
+            // System.out.println(json);
+            out.println(json);
+
+
+
+
+
+//            ArrayList<Employee> empList = new ArrayList<Employee>(employeeFacade.salesExecutiveEmployees());
+//            ArrayList<Employee> jList = new ArrayList<Employee>();
+//            // int totalRecord = employeeFacade.countNotConvertedSalesLead();
+//          
+//           for (Employee e : empList) {
+//                Employee je = new Employee();
+//                je.setEmp_id(e.getEmp_id());
+//                je.setEmp_name(e.getEmp_name());
+//                
+//                jList.add(je);
+//            }
+//             /* for (Employee e : empList) {
+////                c.getAccount().setCustomer(null);
+//                 e= (Employee) ConvertToJsonObject.convert(e);
+//             
+//            }*/
+//            String json = gson.toJson(new JsonReturnTable(jList.size() + "", jList));
+//            out.println(json);
+        }
     }
 
     private void addRole(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
@@ -578,7 +609,7 @@ public class EmployeeServlet extends HttpServlet {
             String content = "New Password and Confirm Password Does not Match.";
             String json = gson.toJson(new JsonReturnMsg("Change Password", content, "error"));
             out.println(json);
-        } else if (!employeeFacade.checkPassword(e,old_password)) {
+        } else if (!employeeFacade.checkPassword(e, old_password)) {
             String content = "Old Password wrong.";
             String json = gson.toJson(new JsonReturnMsg("Change Password", content, "error"));
             out.println(json);

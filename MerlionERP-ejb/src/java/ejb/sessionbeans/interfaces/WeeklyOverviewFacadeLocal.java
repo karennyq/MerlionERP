@@ -5,6 +5,7 @@
 package ejb.sessionbeans.interfaces;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.ejb.Local;
 import org.persistence.MonthlyOverview;
@@ -32,6 +33,12 @@ public interface WeeklyOverviewFacadeLocal {
 
     int count();
 
-    MonthlyOverview createWO(MonthlyOverview mo, ArrayList<PlannedDemand> pdList);
+    MonthlyOverview createWO(MonthlyOverview mo);
+
+    public ArrayList<WeeklyOverview> findWeekInMonth(Long mo_id);
+
+    public void updateWOByMonth(WeeklyOverview w, ArrayList<PlannedDemand> addPDList, ArrayList<PlannedDemand> subPDList, ArrayList<PlannedDemand> newPDList, ArrayList<PlannedDemand> delPDList);
+    
+    public void updateWOByDay(WeeklyOverview w, ArrayList<PlannedDemand> addPDList, ArrayList<PlannedDemand> subPDList, ArrayList<PlannedDemand> newPDList, ArrayList<PlannedDemand> delPDList);
     
 }

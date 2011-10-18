@@ -52,6 +52,11 @@ public class GVACCESS {
             add(new GVAccessRight("31", "Sales Forecast Management", GVPRODUCTION.SF_MGMT, "3", false));
             add(new GVAccessRight("32", "Production Plan Management", GVPRODUCTION.PP_MGMT, "3", false));
             add(new GVAccessRight("33", "Production Line Management", GVPRODUCTION.PL_MGMT, "3", false));
+            add(new GVAccessRight("34", "Raw Material Management", GVPRODUCTION.RM_MGMT, "3", false));
+            
+            //SCM
+            add(new GVAccessRight("4", "Supply Chain Management", "", "", false));
+            add(new GVAccessRight("40", "Supplier Management", GVSCM.SUPP_MGMT, "4", false));
 
         }
     };

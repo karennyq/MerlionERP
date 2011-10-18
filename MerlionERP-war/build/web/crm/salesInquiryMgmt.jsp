@@ -130,7 +130,7 @@
                         </td>
                         <td align="right">
                             <a href="#" class="easyui-linkbutton" onclick="filterTable()" iconCls="icon-search"></a>
-                            <a href="#" class="easyui-linkbutton" onclick="reset()">Reset</a>
+                            <a href="#" class="easyui-linkbutton" onclick="reset()">Clear</a>
                         </td>
                     </tr>
                 </table>

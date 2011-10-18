@@ -4,6 +4,7 @@
 <%@page import="util.GVFRM"%>
 <%@page import="util.GVSYSTEMADMIN"%>
 <%@page import="util.GVPRODUCTION"%>
+<%@page import="util.GVSCM"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -336,7 +337,19 @@
                         <li iconCls="icon-box"><span><a href="javascript:void(0)" onclick="addTab('pp_mgmt','Production Plan Management','<%=GVPRODUCTION.PP_MGMT%>');">Production Plan Management</a></span></li> 
                         <%}%><%if (hm.get("33").equals("true")) {%>
                         <li iconCls="icon-box"><span><a href="javascript:void(0)" onclick="addTab('pl_mgmt','Production Line Management','<%=GVPRODUCTION.PL_MGMT%>');">Production Line Management</a></span></li>
+                        <%}%><%if (hm.get("34").equals("true")) {%>
+                        <li iconCls="icon-box"><span><a href="javascript:void(0)" onclick="addTab('rm_mgmt','Raw Material Management','<%=GVPRODUCTION.RM_MGMT%>');">Raw Material Management</a></span></li>
                         <%}%>
+                    </ul>  
+                </li>
+                <%}%>
+                <%if (hm.get("4").equals("true")) {%>
+                <li iconCls="icon-window">  
+                    <span>Supply Chain Management</span>  
+                    <ul>
+                        <%if (hm.get("40").equals("true")) {%>
+                        <li iconCls="icon-box"><span><a href="javascript:void(0)" onclick="addTab('supp_mgmt','Supplier Management','<%=GVSCM.SUPP_MGMT%>');">Supplier Management</a></span></li>
+                        <%}%> 
                     </ul>  
                 </li>
                 <%}%>

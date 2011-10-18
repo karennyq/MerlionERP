@@ -30,18 +30,20 @@ public interface CustomerFacadeLocal {
 
     int count();
 
-    public Collection findFilteredCustomers();
+    public Collection findFilteredCustomers(int page, int rows, String sort, String order, String inquirer_id, String company_name);
 
-    public void createCustomer(String inquirer_id,String emp_id, String company_name, String contact_person, String contact_no, String email, String remarks,
+    public int countFilteredCustomers(int page, int rows, String sort, String order, String inquirer_id, String company_name);
+
+    public void createCustomer(String inquirer_id, String emp_id, String company_name, String contact_person, String contact_no, String email, String remarks,
             String company_add, String fax_no, String cust_type, String country, String city);
 
-    public boolean convertCustomer(String inquirer_id,String emp_id, String company_name, String contact_person, String contact_no, String email, String remarks,
+    public boolean convertCustomer(String inquirer_id, String emp_id, String company_name, String contact_person, String contact_no, String email, String remarks,
             String company_add, String fax_no, String cust_type, String country, String city);
 
     public void updateCustomer(String inquirer_id, String company_name, String contact_person, String contact_no, String email, String remarks,
             String company_add, String fax_no, String cust_type, String country, String city);
-    
+
     public Collection findFilteredCustomers(String emp_id);
-    
-    public void updateCustSE(String [] chk_status,String emp2_id);
+
+    public void updateCustSE(String[] chk_status, String emp2_id);
 }

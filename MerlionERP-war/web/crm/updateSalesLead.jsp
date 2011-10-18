@@ -48,6 +48,7 @@
                         $('#country').val(data.country);
                         $('#city').val(data.city);
                         $('#sales_lead_status').combobox('select',data.sales_lead_status.replace('_',' '));
+                        $('#cust_type').combobox('select',data.cust_type.replace('_',' '))
                     }
                 });
             } 
@@ -69,6 +70,14 @@
                     required:true, 
                     editable:false
                 });  
+                $('#cust_type').combobox({  
+                    url:'../CustomerServlet?action=loadPage&content=dropdown',  
+                    valueField:'text',  
+                    textField:'text',
+                    editable:false,
+                    required:true,
+                    formatter:comboboxFomatter
+                });
             });
             
             function salesReset(formId,content){
@@ -132,6 +141,12 @@
                     <tr>  
                         <td class="tableForms_label">Address:</td>  
                         <td class="tableForms_userInput"><textarea class="easyui-validatebox" id="company_add" name="company_add"></textarea></td>  
+                    </tr>
+                    <tr>
+                        <td class="tableForms_label">Sales Lead Type:</td>  
+                        <td class="tableForms_userInput">
+                            <select id="cust_type" name="cust_type" panelHeight="auto" class="easyui-combobox"></select>
+                        </td> 
                     </tr>
                     <tr>
                         <td class="tableForms_label">Remarks:</td>  

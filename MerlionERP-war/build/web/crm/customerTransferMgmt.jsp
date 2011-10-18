@@ -62,12 +62,14 @@
             });
             
             function openDd1(){
-                $('#sett1').datagrid('reload');
+                searchEmp1();
+                //$('#sett1').datagrid('reload');
                 $('#sedd1').dialog('open');
             }
             
             function openDd2(){
-                $('#sett2').datagrid('reload');
+                searchEmp2();
+                //$('#sett2').datagrid('reload');
                 $('#sedd2').dialog('open');
             }
             
@@ -80,9 +82,38 @@
                             $('#emp2_id').val('');
                             $('#emp2_id_tx').html('');
                             this.reset();
+                            var f_url= '../CustomerServlet?action=loadPage&content=tableTRSF&emp_id='+$('#emp1_id').val();
+                            $('#sctt').datagrid({url:f_url});
+                            $('#sctt').datagrid('reload');
                         });
                     }
                 });
+            }
+            
+            function searchEmp1(){                
+                var emp_name=$('#emp_name2').val();
+                var f_url='../EmployeeServlet?action=loadPage&content=dialog&emp_name='+emp_name;
+                $('#sett1').datagrid({  
+                    url:f_url });   
+                $('#sett1').datagrid('load');
+            }
+            
+            function reset1(){
+                $('#emp_name2').val("");
+                searchEmp1();
+            }
+            
+            function searchEmp2(){
+                var emp_name=$('#emp_name3').val();
+                var f_url='../EmployeeServlet?action=loadPage&content=dialog&emp_name='+emp_name;
+                $('#sett2').datagrid({  
+                    url:f_url });   
+                $('#sett2').datagrid('load');
+            }
+            
+            function reset2(){
+                $('#emp_name3').val("");
+                searchEmp2();
             }
         </script>
     </head>
@@ -141,13 +172,31 @@
             <br/>
             <div class="form_buttons">
                 <input type="submit" value="Transfer"/>
-                <input type="button" onclick="custTMReset('ff','Reset the form?')" value="Reset" />
+                <input type="button" onclick="custTMReset('ff','Do you want to clear the form?')" value="Clear" />
             </div> 
         </form>
-        <div id="sedd1" title="Search Employee" style="width:600px; height:300px">
+
+
+
+        <div id="sedd1" title="Search Employee" style="width:600px; height:350px">
+            <div id="tb1" style="padding:5px;height:auto">  
+                <div>
+                    <table cellpadding="5">
+                        <tr>
+                            <td>Employee Name:</td>
+                            <td><input name="emp_name2" id="emp_name2" type="text"/></td>
+                            <td>
+                                <a href="#" class="easyui-linkbutton" onclick="searchEmp1()" iconCls="icon-search"></a>
+                                <a href="#" class="easyui-linkbutton" onclick="reset1()">Clear</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>  
+            </div>
             <table id="sett1" class="easyui-datagrid" fit="true" style="width:100%;"  
                    url="../EmployeeServlet?action=loadPage&content=dialog"   
                    singleSelect="true" fitColumns="true" pagination="true"
+                   toolbar="#tb1"  
                    rownumbers="false">  
                 <thead>  
                     <tr> 
@@ -158,10 +207,28 @@
                 </thead>  
             </table> 
         </div>
-        <div id="sedd2" title="Search Employee" style="width:600px; height:300px">
+
+
+
+        <div id="sedd2" title="Search Employee" style="width:600px; height:350px">
+            <div id="tb2" style="padding:5px;height:auto">  
+                <div>
+                    <table cellpadding="5">
+                        <tr>
+                            <td>Employee Name:</td>
+                            <td><input name="emp_name3" id="emp_name3" type="text"/></td>
+                            <td>
+                                <a href="#" class="easyui-linkbutton" onclick="searchEmp2()" iconCls="icon-search"></a>
+                                <a href="#" class="easyui-linkbutton" onclick="reset2()">Clear</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>  
+            </div>
             <table id="sett2" class="easyui-datagrid" fit="true" style="width:100%;"  
                    url="../EmployeeServlet?action=loadPage&content=dialog"  
                    singleSelect="true" fitColumns="true" pagination="true"
+                   toolbar="#tb2"  
                    rownumbers="false">  
                 <thead>  
                     <tr> 

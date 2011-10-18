@@ -34,18 +34,18 @@ public interface SalesLeadFacadeLocal {
     public int countFilteredSalesLead(int page, int rows, java.lang.String sort, java.lang.String order, java.lang.String salesLeadID, java.lang.String compName);
 
     public void createSalesLead(String company_name, String contact_person, String contact_no, String email, String remarks,
-            String company_add, String fax_no, String country, String city);
+            String company_add, String fax_no, String country, String city, String cust_type);
     
     boolean salesLeadCompNameExist(String compName);
 
     public void updateSalesLead(String inquirer_id, String company_name, String contact_person, String contact_no, String email,
-            String remarks, String company_add, String fax_no, String country, String city, String sales_lead_status);
+            String remarks, String company_add, String fax_no, String country, String city, String sales_lead_status, String cust_type);
     
     boolean verifyCompName (String salesLeadID, String compName);
 
-    public java.util.Collection findNotConvertedSalesLead(String companyName);
+    public java.util.Collection findNotConvertedSalesLead(int page, int rows, String sort, String order,String companyName);
 
-    public int countNotConvertedSalesLead(String companyName);
+    public int countNotConvertedSalesLead(int page, int rows, String sort, String order,String companyName);
 
     public int countAllInquirer();
 

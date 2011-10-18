@@ -61,6 +61,7 @@ public class SalesQuotationFacade extends AbstractFacade<SalesQuotation> impleme
         sq.setDiscount(add_disc);
         DateUtil du = new DateUtil();
         sq.setExpiry_date(du.addWeek(sq.getRequest_date()));
+        sq.setCustGrpDiscount(1.0); // ======================================= need to define... this is hardcode...
 
         create(sq);
         Integer totalLeadTime = 0;
@@ -75,7 +76,9 @@ public class SalesQuotationFacade extends AbstractFacade<SalesQuotation> impleme
         }
 
         sq.setIndicative_lead_time(totalLeadTime);
+        sq.setDiscounted_total();
         sq.setTotal_price();
+
 
         edit(sq);
     }

@@ -7,9 +7,10 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import org.persistence.SalesInquiry;
 import org.persistence.SalesLead.ConvertStatus;
+import org.persistence.SalesLead.CustomerType;
 import org.persistence.SalesLead.SalesLeadStatus;
 
-@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-11T17:19:03")
+@Generated(value="EclipseLink-2.2.0.v20110202-r8913", date="2011-10-18T00:11:38")
 @StaticMetamodel(SalesLead.class)
 public class SalesLead_ { 
 
@@ -22,10 +23,11 @@ public class SalesLead_ {
     public static volatile SingularAttribute<SalesLead, String> fax_no;
     public static volatile SingularAttribute<SalesLead, String> country;
     public static volatile SingularAttribute<SalesLead, String> city;
+    public static volatile SingularAttribute<SalesLead, CustomerType> cust_type;
     public static volatile SingularAttribute<SalesLead, Date> create_date_time;
+    public static volatile SingularAttribute<SalesLead, String> email;
     public static volatile SingularAttribute<SalesLead, Long> inquirer_id;
     public static volatile SingularAttribute<SalesLead, String> company_name;
-    public static volatile SingularAttribute<SalesLead, String> email;
     public static volatile SingularAttribute<SalesLead, ConvertStatus> convert_status;
 
 }

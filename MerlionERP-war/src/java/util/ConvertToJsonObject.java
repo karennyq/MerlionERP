@@ -18,7 +18,9 @@ import org.persistence.SalesInquiry;
 import org.persistence.SalesLead;
 import org.persistence.SalesOrder;
 import org.persistence.SalesQuotation;
-import org.persistence.SoleDistribution;
+import org.persistence.OperatingRegion;
+import org.persistence.RawMaterial;
+import org.persistence.Supplier;
 
 /**
  *
@@ -41,7 +43,7 @@ public class ConvertToJsonObject {
                 c.getAccount().setCustomer(null);
                 c.getEmployee().setRoles(null);
                 c.getEmployee().setAuditTrials(null);
-                
+
                 for (PurchaseOrder po : c.getPurchaseOrders()) {
                     po.setCustomer(null);
                     po.setLineItems(null);
@@ -49,7 +51,7 @@ public class ConvertToJsonObject {
                     po.setSalesQuotation(null);
                 }
 
-                for (SoleDistribution sd : c.getSoleDistribution()) {
+                for (OperatingRegion sd : c.getOperatingRegions()) {
                     sd.setCustomer(null);
                 }
 
@@ -64,7 +66,7 @@ public class ConvertToJsonObject {
             ac.getCustomer().setAccount(null);
             ac.getCustomer().setPreSaleDocuments(null);
             ac.getCustomer().setPurchaseOrders(null);
-            ac.getCustomer().setSoleDistribution(null);
+            ac.getCustomer().setOperatingRegions(null);
 
             return ac;
         } else if (obj instanceof LineItem) {
@@ -81,7 +83,7 @@ public class ConvertToJsonObject {
 
             SalesInquiry si = (SalesInquiry) obj;
 
- 
+
 
 
             for (LineItem li : si.getLineItems()) {
@@ -94,7 +96,7 @@ public class ConvertToJsonObject {
                 Customer c = (Customer) si.getInquirer();
                 c.setAccount(null);
                 c.setPurchaseOrders(null);
-                c.setSoleDistribution(null);
+                c.setOperatingRegions(null);
             }
 
             if (si instanceof SalesQuotation) {
@@ -153,7 +155,7 @@ public class ConvertToJsonObject {
             po.getCustomer().setPurchaseOrders(null);
             po.getCustomer().setAccount(null);
             po.getCustomer().setPreSaleDocuments(null);
-            po.getCustomer().setSoleDistribution(null);
+            po.getCustomer().setOperatingRegions(null);
             po.getCustomer().setEmployee(null);
 
             po.setSalesOrder(null);
@@ -195,20 +197,25 @@ public class ConvertToJsonObject {
             li.getProduct().setSafety_stock_boxes(null);
             li.getProduct().setSalesForecasts(null);
             return li;
-        }else if (obj instanceof SoleDistribution) {
-            
-            SoleDistribution sd = (SoleDistribution) obj;
-            sd.getCustomer().setSoleDistribution(null);
+        } else if (obj instanceof OperatingRegion) {
+
+            OperatingRegion sd = (OperatingRegion) obj;
+            sd.getCustomer().setOperatingRegions(null);
             sd.getCustomer().setAccount(null);
             sd.getCustomer().setPreSaleDocuments(null);
             sd.getCustomer().setPurchaseOrders(null);
             sd.getCustomer().setEmployee(null);
+            
+        } else if (obj instanceof Supplier) {
+            Supplier s = (Supplier) obj;
+            s.setRawMaterialDetail(null);
+            
+        } else if (obj instanceof RawMaterial) {
+
+            RawMaterial rm = (RawMaterial) obj;
+            rm.setRawMaterialDetails(null);
+            rm.setRawMatBatches(null);
         }
-
-
-
-
-
 
         return obj;
     }

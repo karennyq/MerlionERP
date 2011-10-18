@@ -24,10 +24,18 @@ public class SalesLead implements Serializable {
     private static final long serialVersionUID = 1L;
     public enum SalesLeadStatus {Active, Inactive}
     public enum ConvertStatus {Converted, Not_Converted}
+    public enum CustomerType {
+
+        Wholesale, Direct_Sale
+    }
     
     @Id
     @GeneratedValue
     private Long inquirer_id;
+    
+    @Basic
+    @Enumerated
+    private CustomerType cust_type;
     
     @Basic
     private String company_name;
@@ -182,5 +190,15 @@ public class SalesLead implements Serializable {
     public void setPreSaleDocuments(Collection<SalesInquiry> param) {
         this.preSaleDocuments = param;
     }
+
+	public CustomerType getCust_type() {
+		return cust_type;
+	}
+
+	public void setCust_type(CustomerType cust_type) {
+		this.cust_type = cust_type;
+	}
+    
+    
     
 }
